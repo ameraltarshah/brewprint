@@ -397,7 +397,12 @@
     };
     // a "natural" match that is really "natural sweetness" in the notes is common; require process context for "natural" when washed also appears
     if (res.process === "natural" && /washed|مغسول/.test(text) && !/natural process|process[:\s]*natural|المعالجة\s*[:\-]?\s*(طبيعي|مجفف)/.test(text)) res.process = "washed";
+    // Arabic display names for the app's Arabic mode (not counted in "found")
+    const arOrigin = ORIGINS.find(o => o[0] === res.origin);
+    const notesAr = (res.notes || []).map(n => { const f = FLAVORS.find(r => r[0] === n); return f && f[2][0] ? f[2][0] : n; });
     res.found = Object.entries(res).filter(([k, v]) => v && (!Array.isArray(v) || v.length)).map(([k]) => k);
+    res.originAr = arOrigin && arOrigin[2][0] ? arOrigin[2][0] : res.origin;
+    res.notesAr = notesAr;
     return res;
   }
 
