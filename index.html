@@ -49,6 +49,25 @@ img{max-width:100%}
 .paste p{margin:0;font-size:13px;color:var(--muted)}
 .paste textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical;font:inherit;color:var(--ink)}
 .paste button{align-self:flex-start}
+.modeswitch{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modeswitch button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.modeswitch button b{font-family:var(--f-display);font-size:17px}
+.modeswitch button span{font-size:12.5px;color:var(--muted)}
+.modeswitch button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.modeswitch button[aria-pressed="true"] b{color:var(--accent)}
+.libcards{display:flex;flex-direction:column;gap:10px}
+.libcard{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px;width:100%}
+.libcard:hover{border-color:var(--ink)}
+.libcard[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.libcard .lc-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.libcard .lc-name{font-family:var(--f-display);font-weight:700;font-size:18px}
+.libcard .lc-time{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+.libcard .lc-by{font-size:13px;color:var(--accent);font-weight:600}
+.libcard .lc-blurb{font-size:13.5px;color:var(--muted)}
+.libcard .lc-stats{font-family:var(--f-mono);font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
+.libcard .lc-gear{font-size:12px;color:var(--amber);font-weight:600}
+.hint{font-size:12px;color:var(--muted)}
+.source{font-size:13px;color:var(--accent);font-weight:600;text-underline-offset:3px}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
 .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
@@ -191,7 +210,21 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 
 <div class="grid">
 <form class="form" id="form" autocomplete="off">
-  <section class="block">
+  <div class="modeswitch" role="group" aria-label="How do you want to brew?" id="brewMode">
+    <button type="button" data-v="library" aria-pressed="true"><b>Famous recipes</b><span>Proven V60 recipes, step by step</span></button>
+    <button type="button" data-v="custom" aria-pressed="false"><b>Customize</b><span>Built for your beans and taste</span></button>
+  </div>
+
+  <section class="block" id="libBlock">
+    <div class="block-head"><span class="n">1</span><h2>Choose a recipe</h2></div>
+    <div class="toggle" role="group" aria-label="Hot or iced" id="libTemp">
+      <button type="button" data-v="hot" aria-pressed="true">Hot</button>
+      <button type="button" data-v="iced" aria-pressed="false">Iced</button>
+    </div>
+    <div class="libcards" id="libList" role="list"></div>
+  </section>
+
+  <section class="block" id="beansBlock">
     <div class="block-head"><span class="n">1</span><h2>Your beans</h2><span class="example" id="exampleTag">Example bag, replace with yours</span></div>
     <label class="drop" id="drop">
       <div class="thumb" id="thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
@@ -220,13 +253,13 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
     <datalist id="origins"><option>Ethiopia</option><option>Kenya</option><option>Colombia</option><option>Brazil</option><option>Yemen</option><option>Panama</option><option>Costa Rica</option><option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Rwanda</option><option>Burundi</option><option>Peru</option><option>Bolivia</option><option>Indonesia</option><option>Mexico</option><option>Nicaragua</option><option>Uganda</option><option>Tanzania</option><option>India</option><option>Ecuador</option><option>China</option></datalist>
   </section>
 
-  <section class="block">
+  <section class="block" id="cupBlock">
     <div class="block-head"><span class="n">2</span><h2>Your cup</h2></div>
     <div class="toggle" role="group" aria-label="Hot or iced" id="tempMode">
       <button type="button" data-v="hot" aria-pressed="true">Hot</button>
       <button type="button" data-v="iced" aria-pressed="false">Iced</button>
     </div>
-    <div class="field"><span class="label">Taste you like</span>
+    <div class="field" id="tasteField"><span class="label">Taste you like</span>
       <div class="seg" id="taste" role="group" aria-label="Taste">
         <button type="button" class="chip" data-v="classic">Classic</button>
         <button type="button" class="chip" data-v="fruity">Fruity</button>
@@ -235,7 +268,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
         <button type="button" class="chip" data-v="floral">Floral</button>
         <button type="button" class="chip" data-v="bold">Bold</button>
       </div></div>
-    <div class="field"><span class="label">Brewer</span>
+    <div class="field" id="brewerField"><span class="label">Brewer</span>
       <div class="seg" id="brewer" role="group" aria-label="Brewer">
         <button type="button" class="chip" data-v="v60">V60</button>
         <button type="button" class="chip" data-v="kalita">Kalita Wave</button>
@@ -246,7 +279,8 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       </div></div>
     <div class="row">
       <div class="field"><label for="dose">Coffee</label>
-        <div class="stepper"><button type="button" id="doseDown" aria-label="Less coffee">−</button><input id="dose" inputmode="decimal" value="18"><span>g</span><button type="button" id="doseUp" aria-label="More coffee">+</button></div></div>
+        <div class="stepper"><button type="button" id="doseDown" aria-label="Less coffee">−</button><input id="dose" inputmode="decimal" value="18"><span>g</span><button type="button" id="doseUp" aria-label="More coffee">+</button></div>
+        <small class="hint" id="doseHint" hidden></small></div>
       <div class="field" style="flex:1;min-width:180px"><label for="grinder">Grinder</label>
         <select id="grinder"><option value="timemore">Timemore C2</option><option value="um">Show microns only</option><option value="comandante">Comandante C40</option><option value="encore">Baratza Encore</option><option value="ode">Fellow Ode Gen 2</option></select></div>
     </div>
@@ -268,8 +302,8 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
     <div class="timer"><div class="clock" id="clock">0:00</div><div class="next" id="next">Start when your first pour begins.</div></div>
     <div class="actions"><button class="primary" type="button" id="tStart">Start brew timer</button><button class="ghost" type="button" id="tReset">Reset</button></div>
   </div>
-  <div class="sec"><h3>Why these numbers</h3><ul class="why" id="why"></ul></div>
-  <div class="sec"><h3>How did it taste?</h3>
+  <div class="sec"><h3 id="whyTitle">Why these numbers</h3><ul class="why" id="why"></ul><a class="source" id="rSource" href="#" target="_blank" rel="noopener" hidden>See the original recipe</a></div>
+  <div class="sec" id="dialSec"><h3>How did it taste?</h3>
     <div class="dial" id="dial">
       <button type="button" data-v="sour"><b>Sour or thin</b><span>Grind finer, hotter</span></button>
       <button type="button" data-v="bitter"><b>Bitter or dry</b><span>Grind coarser, cooler</span></button>
@@ -286,7 +320,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer>Brewprint v2 · Free, and works offline once installed. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer>Brewprint v3 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
 
 <dialog id="savedDlg">
@@ -295,6 +329,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </dialog>
 
 <script src="bagparse.js"></script>
+<script src="library.js"></script>
 <script>
 (() => {
 const $ = id => document.getElementById(id);
@@ -342,7 +377,43 @@ const GRINDERS = {
 const grindWord = um => um < 450 ? "fine" : um < 600 ? "medium-fine" : um < 800 ? "medium" : um < 1000 ? "medium-coarse" : "coarse";
 
 const EXAMPLE = {name:"Guji Hambela", roaster:"Example Roasters", origin:"Ethiopia", process:"natural", roast:"light", variety:"Heirloom", alt:"2100", notes:"blueberry, jasmine, cocoa"};
-const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true};
+const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true,
+  brewMode:"library", libId:"hoffmann-ultimate", libDose:30};
+
+/* ---------- recipe library (library.js) ---------- */
+const LIB = window.BREW_LIBRARY || [];
+const libById = id => LIB.find(x => x.id === id);
+const libForTemp = () => LIB.filter(x => x.temp === state.mode);
+const doseKey = () => state.brewMode === "library" ? "libDose" : "dose";
+function libRecipe(){
+  let rec = libById(state.libId);
+  if (!rec || rec.temp !== state.mode){ rec = libForTemp()[0]; state.libId = rec.id; state.libDose = rec.dose; }
+  const dose = clamp(Number(state.libDose) || rec.dose, 5, 120), k = dose / rec.dose;
+  const sw = v => Math.round(v * k);
+  const water = sw(rec.water), ice = sw(rec.ice), iced = rec.temp === "iced";
+  const steps = rec.steps.map(st => ({s:st.s, t:fmt(st.s), a:st.text.replace(/\{w\}/g, st.w != null ? sw(st.w) : ""),
+    w: st.w != null ? sw(st.w) + " g" : "", dur: st.dur || 0, end: !!st.end}));
+  const why = [...rec.tips];
+  if (Math.abs(k - 1) > 0.001) why.unshift(`Scaled from the original ${rec.dose} g to ${dose} g: every weight changes, the times stay the same.` + (k > 1.3 ? " With a bigger dose, expect the drawdown to run a little longer." : ""));
+  return {lib:rec, dose, iced, brewer:BREWERS.v60, water, ice, temp:rec.tempC, grind:rec.grind, steps, total:rec.total,
+    prep: rec.prep.map(p => p.replace(/\{ice\}/g, ice)), why, timer:true, timeLabel:rec.time,
+    ratioLabel: iced ? "1:" + +((water + ice) / dose).toFixed(1) : "1:" + +(water / dose).toFixed(1),
+    ratioSub: iced ? `1:${+(water / dose).toFixed(1)} brew + ice` : ""};
+}
+function renderLibList(){
+  $("libList").innerHTML = libForTemp().map(x => `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
+    <span class="lc-top"><span class="lc-name">${esc(x.name)}</span><span class="lc-time">${esc(x.time)}</span></span>
+    <span class="lc-by">${esc(x.by)}</span>
+    <span class="lc-blurb">${esc(x.blurb)}</span>
+    <span class="lc-stats">${x.dose} g coffee · ${x.water} g water${x.ice ? ` + ${x.ice} g ice` : ""} · ${x.tempC} °C</span>
+    ${x.gear ? `<span class="lc-gear">${esc(x.gear)}</span>` : ""}</button>`).join("");
+}
+function applyModeUI(){
+  const lib = state.brewMode === "library";
+  $("libBlock").hidden = !lib; $("beansBlock").hidden = lib;
+  $("tempMode").hidden = lib; $("tasteField").hidden = lib; $("brewerField").hidden = lib;
+  if (document.activeElement !== $("dose")) $("dose").value = state[doseKey()];
+}
 
 function bean(){
   return {name:$("bName").value.trim(), roaster:$("bRoaster").value.trim(), origin:$("bOrigin").value.trim(),
@@ -492,13 +563,30 @@ function frenchHot(r, ta, dose, ratio){
 
 /* ---------- render ---------- */
 function render(){
-  const b = bean(), r = compute(), br = r.brewer;
-  $("rTitle").textContent = b.name || "Your coffee";
-  $("rMeta").textContent = [b.roaster, b.origin, b.variety, b.alt && (b.alt + " masl")].filter(Boolean).join(" · ") || "Add details for a sharper recipe";
-  const coldBrew = r.iced && state.brewer==="press";
-  $("cardKicker").textContent = coldBrew ? "Cold brew recipe" : (r.iced ? "Iced " : "Hot ") + br.name + " recipe";
-  $("rTags").innerHTML = [PROCESS[b.process].name, ROAST[b.roast].name + " roast", TASTE[state.taste].name, ...(b.notes ? b.notes.split(/[,،]/).map(s=>s.trim()).filter(Boolean).slice(0,4) : [])]
-    .map(t => `<span class="tag">${esc(t)}</span>`).join("");
+  const lib = state.brewMode === "library";
+  syncAll(); applyModeUI();
+  const b = bean(), r = lib ? libRecipe() : compute(), br = r.brewer;
+  const coldBrew = !lib && r.iced && state.brewer==="press";
+  if (lib){
+    renderLibList();
+    $("rTitle").textContent = r.lib.name;
+    $("rMeta").textContent = "by " + r.lib.by + (r.lib.gear ? " · " + r.lib.gear : "");
+    $("cardKicker").textContent = "Famous recipe · " + (r.iced ? "Iced" : "Hot") + " V60";
+    $("rTags").innerHTML = r.lib.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("");
+    $("doseHint").hidden = r.dose === r.lib.dose;
+    $("doseHint").textContent = `Original: ${r.lib.dose} g. Everything is scaled to your dose.`;
+    $("rSource").href = r.lib.source;
+  } else {
+    $("rTitle").textContent = b.name || "Your coffee";
+    $("rMeta").textContent = [b.roaster, b.origin, b.variety, b.alt && (b.alt + " masl")].filter(Boolean).join(" · ") || "Add details for a sharper recipe";
+    $("cardKicker").textContent = coldBrew ? "Cold brew recipe" : (r.iced ? "Iced " : "Hot ") + br.name + " recipe";
+    $("rTags").innerHTML = [PROCESS[b.process].name, ROAST[b.roast].name + " roast", TASTE[state.taste].name, ...(b.notes ? b.notes.split(/[,،]/).map(s=>s.trim()).filter(Boolean).slice(0,4) : [])]
+      .map(t => `<span class="tag">${esc(t)}</span>`).join("");
+    $("doseHint").hidden = true;
+  }
+  $("rSource").hidden = !lib;
+  $("whyTitle").textContent = lib ? "About this recipe" : "Why these numbers";
+  $("dialSec").hidden = lib;
   const g = GRINDERS[state.grinder];
   const cells = [
     ["Coffee", r.dose, "g", ""],
@@ -519,11 +607,12 @@ function render(){
   $("applied").hidden = !state.adj.log.length;
   $("appliedText").textContent = state.adj.log.length ? "Adjusted: " + state.adj.log.join(", ") : "";
   current = r; resetTimer(); $("notes").textContent = "";
-  try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder})); } catch(e){}
+  try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder,
+    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose})); } catch(e){}
 }
 
 function drawChart(r){
-  const W=600,H=170,L=44,R=14,T=14,B=30, pts=r.steps.filter(s=>!s.end);
+  const W=600,H=170,L=44,R=14,T=14,B=30, pts=r.steps.filter(s=>!s.end && s.w);
   const tMax = r.total, wMax = r.water;
   const x = s => L + (s/tMax)*(W-L-R), y = w => H-B - (w/wMax)*(H-T-B);
   let d = `M${x(0)},${y(0)}`, cum = 0;
@@ -552,12 +641,19 @@ function bindSeg(id, key){
   el.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state[key] = b.dataset.v; sync(); render(); });
   return sync;
 }
-const syncers = [bindSeg("tempMode","mode"), bindSeg("taste","taste"), bindSeg("brewer","brewer")];
+const syncers = [bindSeg("tempMode","mode"), bindSeg("libTemp","mode"), bindSeg("brewMode","brewMode"), bindSeg("taste","taste"), bindSeg("brewer","brewer")];
 const syncAll = () => syncers.forEach(f => f());
-$("dose").addEventListener("input", () => { const v = parseFloat($("dose").value); if (v > 0) { state.dose = v; render(); }});
-$("dose").addEventListener("blur", () => { $("dose").value = state.dose; });
-$("doseDown").onclick = () => { state.dose = clamp(state.dose - 1, 5, 120); $("dose").value = state.dose; render(); };
-$("doseUp").onclick = () => { state.dose = clamp(state.dose + 1, 5, 120); $("dose").value = state.dose; render(); };
+$("libList").addEventListener("click", e => {
+  const c = e.target.closest(".libcard"); if (!c) return;
+  const rec = libById(c.dataset.id); if (!rec) return;
+  state.libId = rec.id; state.libDose = rec.dose; render();
+  if (matchMedia("(max-width: 959px)").matches)
+    document.querySelector(".card").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
+});
+$("dose").addEventListener("input", () => { const v = parseFloat($("dose").value); if (v > 0) { state[doseKey()] = v; render(); }});
+$("dose").addEventListener("blur", () => { $("dose").value = state[doseKey()]; });
+$("doseDown").onclick = () => { const k = doseKey(); state[k] = clamp(state[k] - 1, 5, 120); $("dose").value = state[k]; render(); };
+$("doseUp").onclick = () => { const k = doseKey(); state[k] = clamp(state[k] + 1, 5, 120); $("dose").value = state[k]; render(); };
 $("grinder").onchange = () => { state.grinder = $("grinder").value; render(); };
 ["bName","bRoaster","bOrigin","bProcess","bRoast","bVariety","bAlt","bNotes"].forEach(id => $(id).addEventListener("input", () => { if (state.example){ state.example=false; $("exampleTag").hidden = true; } render(); }));
 
@@ -601,14 +697,17 @@ $("tReset").onclick = resetTimer;
 const loadSaved = () => { try { return JSON.parse(localStorage.getItem("brewprint.saved")||"[]"); } catch(e){ return []; } };
 $("save").onclick = () => {
   const list = loadSaved(); const b = bean();
-  list.unshift({id:Date.now(), bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder, adj:state.adj});
+  if (state.brewMode === "library") list.unshift({id:Date.now(), kind:"library", libId:state.libId, mode:state.mode, libDose:state.libDose, grinder:state.grinder});
+  else list.unshift({id:Date.now(), bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder, adj:state.adj});
   try { localStorage.setItem("brewprint.saved", JSON.stringify(list.slice(0,50))); $("saveStatus").textContent = "Saved to My recipes on this device."; }
   catch(e){ $("saveStatus").textContent = "This browser blocked saving. Try outside a private window."; }
 };
 function showSaved(){
   const list = loadSaved(), ul = $("savedList");
   if (!list.length){ ul.innerHTML = `<li class="empty">No saved recipes yet. Build one and tap “Save recipe”.</li>`; }
-  else ul.innerHTML = list.map(x => `<li><div class="info"><b>${esc(x.bean.name||"Untitled coffee")}</b><small>${esc(BREWERS[x.brewer].name)} · ${x.mode==="iced"?"Iced":"Hot"} · ${esc(TASTE[x.taste].name)} · ${x.dose} g</small></div><button class="ghost" type="button" data-load="${x.id}">Open</button><button class="ghost" type="button" data-del="${x.id}" aria-label="Delete">✕</button></li>`).join("");
+  else ul.innerHTML = list.map(x => `<li><div class="info">${x.kind === "library"
+      ? `<b>${esc(libById(x.libId)?.name || "Famous recipe")}</b><small>Famous recipe · ${esc(libById(x.libId)?.by || "")} · ${x.mode==="iced"?"Iced":"Hot"} · ${x.libDose} g</small>`
+      : `<b>${esc(x.bean.name||"Untitled coffee")}</b><small>${esc(BREWERS[x.brewer].name)} · ${x.mode==="iced"?"Iced":"Hot"} · ${esc(TASTE[x.taste].name)} · ${x.dose} g</small>`}</div><button class="ghost" type="button" data-load="${x.id}">Open</button><button class="ghost" type="button" data-del="${x.id}" aria-label="Delete">✕</button></li>`).join("");
   $("savedDlg").showModal();
 }
 $("openSaved").onclick = showSaved;
@@ -616,8 +715,9 @@ $("closeSaved").onclick = () => $("savedDlg").close();
 $("savedList").addEventListener("click", e => {
   const l = e.target.closest("[data-load]"), d = e.target.closest("[data-del]");
   if (l){ const x = loadSaved().find(r => String(r.id) === l.dataset.load); if (!x) return;
-    setBean(x.bean); Object.assign(state, {mode:x.mode, taste:x.taste, brewer:x.brewer, dose:x.dose, grinder:x.grinder, adj:x.adj||{grind:0,temp:0,ratio:0,log:[]}, example:false});
-    $("dose").value = x.dose; $("grinder").value = x.grinder; $("exampleTag").hidden = true; syncAll(); render(); $("savedDlg").close(); }
+    if (x.kind === "library") Object.assign(state, {brewMode:"library", libId:x.libId, mode:x.mode, libDose:x.libDose, grinder:x.grinder});
+    else { setBean(x.bean); Object.assign(state, {brewMode:"custom", mode:x.mode, taste:x.taste, brewer:x.brewer, dose:x.dose, grinder:x.grinder, adj:x.adj||{grind:0,temp:0,ratio:0,log:[]}, example:false}); $("exampleTag").hidden = true; }
+    $("grinder").value = x.grinder; render(); $("savedDlg").close(); }
   if (d){ const list = loadSaved().filter(r => String(r.id) !== d.dataset.del); try { localStorage.setItem("brewprint.saved", JSON.stringify(list)); } catch(e){} showSaved(); }
 });
 
@@ -743,6 +843,11 @@ if (draft && draft.bean && draft.bean.name && draft.bean.name !== EXAMPLE.name){
   setBean(draft.bean); Object.assign(state, {mode:draft.mode||"hot", taste:draft.taste||"classic", brewer:draft.brewer||"v60", dose:draft.dose||18, grinder:draft.grinder==="comandante"?"timemore":(draft.grinder||"timemore"), example:false});
   $("exampleTag").hidden = true;
 } else setBean(EXAMPLE);
+if (draft && draft.brewMode){
+  Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose});
+  if (draft.mode) state.mode = draft.mode;
+  if (draft.grinder) state.grinder = draft.grinder === "comandante" ? "timemore" : draft.grinder;
+}
 $("dose").value = state.dose; $("grinder").value = state.grinder;
 syncAll(); render();
 })();
