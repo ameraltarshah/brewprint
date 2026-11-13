@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brewprint</title>
+<meta name="description" content="Coffee recipes built for your beans, taste and brewer.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#EDEFE9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111513" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Brewprint">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: form column (beans → brew) beside a sticky "brew card" that reads like a scale display. */
+:root{
+  --bg:#EDEFE9; --surface:#F8F9F5; --sunk:#E2E6DE; --ink:#1B221E; --muted:#5D6A62; --line:#CBD2C8;
+  --accent:#0E6A58; --accent-ink:#F4FBF8; --accent-soft:#D3E8E1; --amber:#B97A10; --amber-soft:#F3E5C6;
+  --lcd:#1C2420; --lcd-ink:#D9F2E7; --lcd-dim:#7E9A8D;
+  --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111513; --surface:#181D1A; --sunk:#202723; --ink:#E4EAE5; --muted:#98A69D; --line:#2F3833;
+  --accent:#4CC2A6; --accent-ink:#06241D; --accent-soft:#163A31; --amber:#E2AA44; --amber-soft:#3A2D12;
+  --lcd:#0A0E0C; --lcd-ink:#BFF0DB; --lcd-dim:#5F7E70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111513; --surface:#181D1A; --sunk:#202723; --ink:#E4EAE5; --muted:#98A69D; --line:#2F3833;
+  --accent:#4CC2A6; --accent-ink:#06241D; --accent-soft:#163A31; --amber:#E2AA44; --amber-soft:#3A2D12;
+  --lcd:#0A0E0C; --lcd-ink:#BFF0DB; --lcd-dim:#5F7E70; color-scheme:dark}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+.install{display:flex;align-items:center;gap:12px;background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:14px}
+.install span{flex:1;min-width:0}
+.install .x{border:0;background:transparent;font-size:18px;cursor:pointer;color:var(--muted);padding:4px 8px}
+.paste{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.paste summary{cursor:pointer;font-weight:600;font-size:14px}
+.paste[open]{display:flex;flex-direction:column;gap:10px}
+.paste p{margin:0;font-size:13px;color:var(--muted)}
+.paste textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical;font:inherit;color:var(--ink)}
+.paste button{align-self:flex-start}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1.5px solid var(--ink);padding-bottom:14px}
+.brand{display:flex;flex-direction:column;gap:4px;min-width:0}
+.brand h1{font-size:clamp(30px,6vw,44px);font-weight:700;line-height:1}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:0;color:var(--muted);max-width:52ch}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:500}
+.ghost:hover{border-color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
+@media (min-width:960px){.grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}.card{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}}
+
+.form{display:flex;flex-direction:column;gap:28px;min-width:0}
+.block{display:flex;flex-direction:column;gap:14px}
+.block-head{display:flex;align-items:baseline;gap:10px}
+.block-head .n{font-family:var(--f-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:0 5px}
+.block-head h2{font-size:21px;font-weight:600}
+.example{font-size:12px;color:var(--amber);background:var(--amber-soft);border-radius:4px;padding:2px 8px;margin-left:auto}
+
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;background:var(--surface);cursor:pointer;position:relative}
+.drop:hover,.drop.over{border-color:var(--accent)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop .thumb{width:56px;height:56px;border-radius:8px;background:var(--sunk);flex:none;display:grid;place-items:center;overflow:hidden}
+.drop .thumb img{width:100%;height:100%;object-fit:cover}
+.drop .thumb svg{width:26px;height:26px;stroke:var(--muted)}
+.drop strong{display:block;font-weight:600}
+.drop small{color:var(--muted)}
+.status{font-size:13px;color:var(--muted);min-height:1.2em}
+.status.err{color:#B3261E}
+:root[data-theme="dark"] .status.err{color:#F28B82}
+
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fields .wide{grid-column:1/-1}
+@media (max-width:480px){.fields{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:13px;font-weight:600}
+.field input,.field select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+.field input:focus,.field select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip small{opacity:.7;font-weight:400}
+.toggle{display:grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:10px;padding:4px;gap:4px;max-width:320px}
+.toggle button{border:0;background:transparent;border-radius:7px;padding:9px;cursor:pointer;font-weight:600}
+.toggle button[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.stepper button{border:0;background:transparent;width:42px;height:44px;font-size:20px;cursor:pointer}
+.stepper button:hover{background:var(--sunk)}
+.stepper input{width:64px;text-align:center;border:0;background:transparent;font-family:var(--f-mono);font-size:20px;font-weight:600;padding:0}
+.stepper span{padding-right:12px;color:var(--muted)}
+
+/* brew card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;min-width:0}
+.card-top{padding:20px 20px 16px;display:flex;flex-direction:column;gap:6px}
+.card-top h2{font-size:26px;font-weight:700;line-height:1.1}
+.meta{color:var(--muted);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tag{font-size:12px;border-radius:4px;padding:2px 8px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.lcd{background:var(--lcd);color:var(--lcd-ink);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px}
+.lcd div{padding:12px 14px;display:flex;flex-direction:column;gap:2px;background:var(--lcd);min-width:0}
+.lcd .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--lcd-dim)}
+.lcd .v{font-family:var(--f-mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.15}
+.lcd .v small{font-size:12px;color:var(--lcd-dim);margin-left:3px}
+.lcd .s{font-family:var(--f-mono);font-size:11.5px;color:var(--lcd-dim);overflow-wrap:anywhere}
+.lcd{border-top:1px solid var(--lcd);border-bottom:1px solid var(--lcd)}
+.lcd div{outline:1px solid color-mix(in srgb,var(--lcd-dim) 22%,transparent)}
+@media (max-width:420px){.lcd{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sec{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.sec h3{font-size:16px;font-weight:600}
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;min-width:320px}
+.prep{margin:0;padding-left:18px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ol.steps li{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+ol.steps li:last-child{border-bottom:0}
+ol.steps .t{font-family:var(--f-mono);color:var(--muted);font-size:14px}
+ol.steps .w{font-family:var(--f-mono);font-weight:600;font-size:15px;white-space:nowrap}
+ol.steps li.now{background:var(--accent-soft);margin-inline:-20px;padding-inline:20px;border-bottom-color:transparent}
+ol.steps li.now .t{color:var(--accent);font-weight:600}
+ol.steps li.done{opacity:.5}
+.why{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.why li{display:grid;grid-template-columns:14px 1fr;gap:6px}
+.why li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber);margin-top:8px}
+.dial{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.dial{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dial button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px}
+.dial button:hover{border-color:var(--ink)}
+.dial b{font-size:14px}
+.dial span{font-size:12px;color:var(--muted)}
+.applied{font-size:13px;color:var(--amber);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.link{border:0;background:none;color:var(--accent);cursor:pointer;padding:0;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+.timer{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.clock{font-family:var(--f-mono);font-size:40px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1}
+.next{font-size:14px;color:var(--muted);flex:1;min-width:160px}
+.next b{color:var(--ink)}
+.primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer}
+.primary:hover{filter:brightness(1.07)}
+.primary:disabled{opacity:.6;cursor:default}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.notes{white-space:pre-wrap;font-size:14px;background:var(--bg);border-radius:10px;padding:12px 14px;margin:0}
+.notes:empty{display:none}
+
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:min(520px,calc(100vw - 32px));padding:0}
+dialog::backdrop{background:rgb(0 0 0 / .4)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.saved{list-style:none;margin:0;padding:8px 10px;max-height:60vh;overflow:auto}
+.saved li{display:flex;gap:10px;align-items:center;padding:10px 8px;border-bottom:1px solid var(--line)}
+.saved li:last-child{border-bottom:0}
+.saved .info{flex:1;min-width:0}
+.saved .info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved .info small{color:var(--muted)}
+.empty{padding:24px 18px;color:var(--muted)}
+footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="brand">
+    <h1>Brew<span>print</span></h1>
+    <p>Tell it about your beans and how you like your cup. It builds the dose, grind, temperature and every pour.</p>
+  </div>
+  <button class="ghost" id="openSaved" type="button">My recipes</button>
+</header>
+<div class="install" id="install" hidden><span id="installText"></span><button class="primary" type="button" id="installBtn" hidden>Install</button><button class="x" type="button" id="installClose" aria-label="Dismiss">✕</button></div>
+
+<div class="grid">
+<form class="form" id="form" autocomplete="off">
+  <section class="block">
+    <div class="block-head"><span class="n">1</span><h2>Your beans</h2><span class="example" id="exampleTag">Example bag, replace with yours</span></div>
+    <label class="drop" id="drop">
+      <div class="thumb" id="thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+      <div><strong>Snap or upload the bag</strong><small id="dropHint">Reads origin, process, roast and notes right on your phone. Free, English or Arabic.</small></div>
+      <input type="file" id="photo" accept="image/jpeg,image/png,image/webp">
+    </label>
+    <div class="status" id="photoStatus" role="status"></div>
+    <details class="paste" id="pasteBox">
+      <summary>Or paste the text from the bag</summary>
+      <p>Most accurate on iPhone: open the photo in Photos, press and hold the label text, tap <b>Select All</b> then <b>Copy</b>. On Android, use Google Lens and tap <b>Copy text</b>.</p>
+      <textarea id="bagText" dir="auto" rows="4" placeholder="Paste or type what the bag says, in English or Arabic"></textarea>
+      <button class="ghost" type="button" id="fillFromText">Fill from text</button>
+    </details>
+    <div class="fields">
+      <div class="field wide"><label for="bName">Coffee name</label><input id="bName" dir="auto" placeholder="e.g. Guji Hambela"></div>
+      <div class="field"><label for="bRoaster">Roaster</label><input id="bRoaster" dir="auto" placeholder="Optional"></div>
+      <div class="field"><label for="bOrigin">Origin</label><input id="bOrigin" dir="auto" list="origins" placeholder="Country"></div>
+      <div class="field"><label for="bProcess">Process</label>
+        <select id="bProcess"><option value="washed">Washed</option><option value="natural">Natural</option><option value="honey">Honey</option><option value="anaerobic">Anaerobic / experimental</option></select></div>
+      <div class="field"><label for="bRoast">Roast level</label>
+        <select id="bRoast"><option value="light">Light</option><option value="medlight">Medium-light</option><option value="medium">Medium</option><option value="meddark">Medium-dark</option><option value="dark">Dark</option></select></div>
+      <div class="field"><label for="bVariety">Variety</label><input id="bVariety" dir="auto" placeholder="Optional"></div>
+      <div class="field"><label for="bAlt">Altitude (masl)</label><input id="bAlt" inputmode="numeric" placeholder="Optional"></div>
+      <div class="field wide"><label for="bNotes">Tasting notes on the bag</label><input id="bNotes" dir="auto" placeholder="e.g. blueberry, jasmine, cocoa"></div>
+    </div>
+    <datalist id="origins"><option>Ethiopia</option><option>Kenya</option><option>Colombia</option><option>Brazil</option><option>Yemen</option><option>Panama</option><option>Costa Rica</option><option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Rwanda</option><option>Burundi</option><option>Peru</option><option>Bolivia</option><option>Indonesia</option><option>Mexico</option><option>Nicaragua</option><option>Uganda</option><option>Tanzania</option><option>India</option><option>Ecuador</option><option>China</option></datalist>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><span class="n">2</span><h2>Your cup</h2></div>
+    <div class="toggle" role="group" aria-label="Hot or iced" id="tempMode">
+      <button type="button" data-v="hot" aria-pressed="true">Hot</button>
+      <button type="button" data-v="iced" aria-pressed="false">Iced</button>
+    </div>
+    <div class="field"><span class="label">Taste you like</span>
+      <div class="seg" id="taste" role="group" aria-label="Taste">
+        <button type="button" class="chip" data-v="classic">Classic</button>
+        <button type="button" class="chip" data-v="fruity">Fruity</button>
+        <button type="button" class="chip" data-v="sweet">Sweet</button>
+        <button type="button" class="chip" data-v="choc">Chocolatey</button>
+        <button type="button" class="chip" data-v="floral">Floral</button>
+        <button type="button" class="chip" data-v="bold">Bold</button>
+      </div></div>
+    <div class="field"><span class="label">Brewer</span>
+      <div class="seg" id="brewer" role="group" aria-label="Brewer">
+        <button type="button" class="chip" data-v="v60">V60</button>
+        <button type="button" class="chip" data-v="kalita">Kalita Wave</button>
+        <button type="button" class="chip" data-v="chemex">Chemex</button>
+        <button type="button" class="chip" data-v="clever">Clever Dripper</button>
+        <button type="button" class="chip" data-v="aeropress">AeroPress</button>
+        <button type="button" class="chip" data-v="press">French Press</button>
+      </div></div>
+    <div class="row">
+      <div class="field"><label for="dose">Coffee</label>
+        <div class="stepper"><button type="button" id="doseDown" aria-label="Less coffee">−</button><input id="dose" inputmode="decimal" value="18"><span>g</span><button type="button" id="doseUp" aria-label="More coffee">+</button></div></div>
+      <div class="field" style="flex:1;min-width:180px"><label for="grinder">Grinder</label>
+        <select id="grinder"><option value="timemore">Timemore C2</option><option value="um">Show microns only</option><option value="comandante">Comandante C40</option><option value="encore">Baratza Encore</option><option value="ode">Fellow Ode Gen 2</option></select></div>
+    </div>
+  </section>
+</form>
+
+<article class="card" aria-live="polite">
+  <div class="card-top">
+    <span class="label" id="cardKicker">Recipe</span>
+    <h2 id="rTitle">Guji Hambela</h2>
+    <div class="meta" id="rMeta"></div>
+    <div class="tags" id="rTags"></div>
+  </div>
+  <div class="lcd" id="lcd"></div>
+  <div class="sec" id="chartSec"><h3>Pour curve</h3><div class="chart" id="chart"></div></div>
+  <div class="sec"><h3>Before you start</h3><ul class="prep" id="prep"></ul></div>
+  <div class="sec"><h3>Steps</h3><ol class="steps" id="steps"></ol></div>
+  <div class="sec" id="timerSec">
+    <div class="timer"><div class="clock" id="clock">0:00</div><div class="next" id="next">Start when your first pour begins.</div></div>
+    <div class="actions"><button class="primary" type="button" id="tStart">Start brew timer</button><button class="ghost" type="button" id="tReset">Reset</button></div>
+  </div>
+  <div class="sec"><h3>Why these numbers</h3><ul class="why" id="why"></ul></div>
+  <div class="sec"><h3>How did it taste?</h3>
+    <div class="dial" id="dial">
+      <button type="button" data-v="sour"><b>Sour or thin</b><span>Grind finer, hotter</span></button>
+      <button type="button" data-v="bitter"><b>Bitter or dry</b><span>Grind coarser, cooler</span></button>
+      <button type="button" data-v="weak"><b>Weak, watery</b><span>Less water per gram</span></button>
+      <button type="button" data-v="strong"><b>Too strong</b><span>More water per gram</span></button>
+    </div>
+    <div class="applied" id="applied" hidden><span id="appliedText"></span><button class="link" type="button" id="dialReset">Undo adjustments</button></div>
+  </div>
+  <div class="sec">
+    <div class="actions"><button class="primary" type="button" id="save">Save recipe</button></div>
+    <div class="status" id="saveStatus" role="status"></div>
+    <pre class="notes" id="notes"></pre>
+  </div>
+</article>
+</div>
+
+<footer>Brewprint v2 · Free, and works offline once installed. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+</div>
+
+<dialog id="savedDlg">
+  <div class="dlg-h"><h3>My recipes</h3><button class="ghost" type="button" id="closeSaved">Close</button></div>
+  <ul class="saved" id="savedList"></ul>
+</dialog>
+
+<script src="bagparse.js"></script>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); };
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const r5 = v => Math.round(v/5)*5;
+
+const BREWERS = {
+  v60:     {name:"V60", kind:"pour", ratio:16, temp:93, grind:650, drawdown:60, flow:"Pour in slow spirals, avoid the paper walls."},
+  kalita:  {name:"Kalita Wave", kind:"pour", ratio:16, temp:93, grind:750, drawdown:75, flow:"Pour in small circles over the flat bed."},
+  chemex:  {name:"Chemex", kind:"pour", ratio:16.5, temp:94, grind:850, drawdown:90, flow:"Pour steadily in the centre; the thick paper drains slowly."},
+  clever:  {name:"Clever Dripper", kind:"steep-drain", ratio:15, temp:94, grind:750},
+  aeropress:{name:"AeroPress", kind:"press", ratio:14, temp:88, grind:550},
+  press:   {name:"French Press", kind:"immersion", ratio:15, temp:95, grind:1000}
+};
+const TASTE = {
+  classic:{name:"Classic", ratio:0, temp:0, grind:0, pours:4, steep:0, why:"Classic keeps the brewer's standard balance."},
+  fruity: {name:"Fruity", ratio:.5, temp:1, grind:25, pours:3, steep:-15, why:"Fruity: a bit more water, slightly coarser and fewer pours keep acidity bright and juicy."},
+  sweet:  {name:"Sweet", ratio:-.5, temp:1, grind:-25, pours:5, steep:0, why:"Sweet: more, smaller pours and a touch finer pull out sugars and round the cup."},
+  choc:   {name:"Chocolatey", ratio:-1, temp:-2, grind:-25, pours:3, steep:15, why:"Chocolatey: a tighter ratio and cooler water favour cocoa and caramel over acidity."},
+  floral: {name:"Floral", ratio:1, temp:0, grind:50, pours:3, steep:-15, why:"Floral: a longer ratio, coarser grind and gentle pours keep delicate aromatics clean."},
+  bold:   {name:"Bold", ratio:-1.5, temp:0, grind:-50, pours:2, steep:30, why:"Bold: less water per gram, finer grind and two big pours build body."}
+};
+const ROAST = {
+  light:{name:"Light", temp:2, grind:-25, bloom:45, why:"Light roasts are dense and hard to extract, so water goes hotter (+2 °C) and grind a little finer."},
+  medlight:{name:"Medium-light", temp:1, grind:0, bloom:40, why:"Medium-light roast: +1 °C for full sweetness."},
+  medium:{name:"Medium", temp:0, grind:0, bloom:35, why:null},
+  meddark:{name:"Medium-dark", temp:-3, grind:25, bloom:30, why:"Medium-dark roast extracts fast, so cooler water (−3 °C) and a coarser grind avoid bitterness."},
+  dark:{name:"Dark", temp:-6, grind:50, bloom:30, why:"Dark roast: much cooler water (−6 °C) and coarser grind keep it from turning ashy."}
+};
+const PROCESS = {
+  washed:{name:"Washed", temp:0, grind:0, why:null},
+  natural:{name:"Natural", temp:-1, grind:0, why:"Natural process: 1 °C cooler keeps fruit sweet rather than winey."},
+  honey:{name:"Honey", temp:0, grind:0, why:null},
+  anaerobic:{name:"Anaerobic", temp:-2, grind:25, why:"Experimental fermentation extracts easily; cooler and coarser keeps the ferment clean."}
+};
+const GRINDERS = {
+  um:null,
+  comandante:{name:"Comandante C40", f:um => Math.round(um/30) + " clicks"},
+  timemore:{name:"Timemore C2", f:um => clamp(Math.round(um/40),6,36) + " clicks from zero"},
+  encore:{name:"Baratza Encore", f:um => "setting " + clamp(Math.round((um-230)/26),1,40)},
+  ode:{name:"Fellow Ode Gen 2", f:um => { const v = clamp(1+(um-250)/105,1,11); const w = Math.floor(v), t = Math.round((v-w)*3); return t===3 ? String(w+1) : t ? w + (t===1?".1":".2") : String(w); }}
+};
+const grindWord = um => um < 450 ? "fine" : um < 600 ? "medium-fine" : um < 800 ? "medium" : um < 1000 ? "medium-coarse" : "coarse";
+
+const EXAMPLE = {name:"Guji Hambela", roaster:"Example Roasters", origin:"Ethiopia", process:"natural", roast:"light", variety:"Heirloom", alt:"2100", notes:"blueberry, jasmine, cocoa"};
+const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true};
+
+function bean(){
+  return {name:$("bName").value.trim(), roaster:$("bRoaster").value.trim(), origin:$("bOrigin").value.trim(),
+    process:$("bProcess").value, roast:$("bRoast").value, variety:$("bVariety").value.trim(),
+    alt:$("bAlt").value.trim(), notes:$("bNotes").value.trim()};
+}
+function setBean(b){
+  $("bName").value=b.name||""; $("bRoaster").value=b.roaster||""; $("bOrigin").value=b.origin||"";
+  if (b.process) $("bProcess").value=b.process; if (b.roast) $("bRoast").value=b.roast;
+  $("bVariety").value=b.variety||""; $("bAlt").value=b.alt||""; $("bNotes").value=b.notes||"";
+}
+
+/* ---------- recipe engine ---------- */
+function compute(){
+  const b = bean(), br = BREWERS[state.brewer], ta = TASTE[state.taste], ro = ROAST[b.roast], pr = PROCESS[b.process];
+  const iced = state.mode === "iced", dose = clamp(Number(state.dose)||18, 5, 120);
+  const why = [];
+  const alt = parseInt(b.alt.replace(/[^0-9]/g,""),10);
+  const hiAlt = alt >= 1900;
+  let temp = br.temp + ro.temp + pr.temp + ta.temp + (hiAlt?1:0) + state.adj.temp;
+  let grind = br.grind + ro.grind + pr.grind + ta.grind + (hiAlt?-25:0) + state.adj.grind;
+  let ratio = br.ratio + ta.ratio + state.adj.ratio;
+  if (ro.why) why.push(ro.why);
+  if (pr.why) why.push(pr.why);
+  if (hiAlt) why.push(`Grown at ${alt} m, so the beans are dense: +1 °C and a touch finer.`);
+  why.push(ta.why);
+
+  const r = {dose, iced, brewer:br, why, prep:[], steps:[], ice:0, timer:true, total:0};
+  const coldBrew = iced && state.brewer === "press";
+
+  if (coldBrew){
+    ratio = clamp(8 + ta.ratio/2 + state.adj.ratio, 6, 10);
+    r.water = Math.round(dose*ratio); grind = clamp(1200 + state.adj.grind, 900, 1400); temp = null; r.timer = false;
+    const hrs = state.taste==="bold"||state.taste==="choc" ? 18 : state.taste==="floral"||state.taste==="fruity" ? 14 : 16;
+    r.ratioLabel = "1:" + +ratio.toFixed(1); r.timeLabel = hrs + " h"; r.timeSub = "fridge steep";
+    r.prep = ["Grind coarse, like rough sea salt.", "Use cold or room-temperature filtered water."];
+    r.steps = [
+      {t:"0 h", a:`Combine ${dose} g coffee with ${r.water} g cold water, stir until all grounds are wet.`, w:r.water+" g"},
+      {t:"0 h", a:"Cover and refrigerate.", w:""},
+      {t:hrs+" h", a:"Plunge slowly, then strain through a paper filter for a cleaner cup.", w:""},
+      {t:"serve", a:`This is a concentrate. Pour over ice and dilute about 1:1 with water or milk (roughly ${Math.round(r.water*0.85)} g).`, w:""}
+    ];
+    why.length = 0;
+    why.push("Iced + French Press makes cold brew: slow, cold extraction gives a low-acid, chocolatey concentrate.");
+    why.push(`Ratio 1:${+ratio.toFixed(1)} brews a concentrate you dilute, so it stays strong over ice.`);
+    if (state.taste==="fruity"||state.taste==="floral") why.push("Shorter 14 h steep keeps fruit and florals from going flat.");
+    if (state.taste==="bold"||state.taste==="choc") why.push("Longer 18 h steep builds body and cocoa.");
+  } else {
+    temp = clamp(Math.round(temp + (iced?2:0)), 80, 97);
+    if (iced) grind -= 100;
+    grind = clamp(Math.round(grind/5)*5, 350, 1200);
+    if (br.kind === "pour") pour(r, br, ta, ro, dose, ratio, iced);
+    else if (br.kind === "steep-drain") clever(r, ta, dose, ratio, iced);
+    else if (br.kind === "press") aero(r, ta, dose, ratio, iced);
+    else frenchHot(r, ta, dose, ratio);
+    if (iced) why.push(`Iced: brewed strong with ${r.water} g hot water straight onto ${r.ice} g ice. Grind is finer and water hotter (+2 °C) to extract fully in less water.`);
+  }
+  if (state.adj.log.length) why.push("Your dial-in: " + state.adj.log.join(", ") + ".");
+  r.temp = temp; r.grind = grind;
+  return r;
+}
+
+function pour(r, br, ta, ro, dose, ratio, iced){
+  const water = iced ? Math.round(dose*clamp(ratio-7.5,7.5,9.5)) : Math.round(dose*ratio);
+  const ice = iced ? r5(water*0.9) : 0;
+  const bloom = r5(Math.max(dose*2.5, Math.min(dose*3, water*0.2)));
+  const bt = ro.bloom;
+  const n = iced ? Math.max(2, ta.pours-1) : ta.pours;
+  const interval = n <= 2 ? 45 : 30;
+  const per = (water - bloom) / n;
+  const gentle = state.taste === "floral";
+  const steps = [{s:0, a:`Bloom: pour ${bloom} g, then swirl so every ground is wet.`, w:bloom, dur:10}];
+  let cum = bloom, last = 0;
+  for (let i=0;i<n;i++){
+    const s = bt + i*interval; cum = i===n-1 ? water : r5(bloom + per*(i+1));
+    steps.push({s, a: i===n-1 ? `Final pour to ${water} g${gentle?", slow and low":""}, then give the brewer a gentle swirl to flatten the bed.` : `Pour to ${cum} g${i===0?". "+br.flow:""}`, w:cum, dur:Math.max(8, Math.round(per/5))});
+    last = s + Math.max(8, Math.round(per/5));
+  }
+  const dd = Math.round(br.drawdown * (iced?0.8:1));
+  r.total = last + dd;
+  steps.push({s:r.total, a:"Drawdown done. Remove the brewer" + (iced ? " and swirl the server so the ice melts in evenly." : " and swirl the cup."), w:null, end:true});
+  r.steps = steps.map(x => ({...x, t:fmt(x.s), w:x.w ? x.w+" g" : ""}));
+  r.water = water; r.ice = ice;
+  r.ratioLabel = iced ? `1:${+((water+ice)/dose).toFixed(1)}` : "1:" + +(water/dose).toFixed(1);
+  r.ratioSub = iced ? `1:${+(water/dose).toFixed(1)} brew + ice` : "";
+  r.timeLabel = fmt(r.total - 10) + "–" + fmt(r.total + 15);
+  r.prep = ["Rinse the paper filter with hot water and discard the rinse.", `Heat water to the set temperature (have about ${water + 100} g ready).`];
+  if (iced) r.prep.unshift(`Put ${ice} g of ice in the server or cup under the brewer.`);
+  r.prep.push("Tare the scale with coffee in the brewer, make a small dip in the centre.");
+  r.why.push(`${n} main pour${n>1?"s":""} after a ${bt}s bloom; bloom is about ${(bloom/dose).toFixed(1)}× the dose so the coffee can degas.`);
+}
+function clever(r, ta, dose, ratio, iced){
+  const water = iced ? Math.round(dose*clamp(ratio-6,8,10)) : Math.round(dose*ratio);
+  const ice = iced ? r5(water*0.9) : 0;
+  const steep = 150 + ta.steep*2;
+  r.steps = [
+    {s:0, a:`Add ${water} g water, then all the coffee.`, w:water},
+    {s:30, a:"Stir gently 3 times to sink the crust. Put the lid on.", w:null},
+    {s:steep, a:"Set the dripper on your " + (iced?"iced server":"cup") + " to start draining.", w:null},
+    {s:steep+60, a:"Drained. Swirl and serve.", w:null, end:true}
+  ].map(x => ({...x, t:fmt(x.s), w:x.w ? x.w+" g" : ""}));
+  r.total = steep+60; r.water = water; r.ice = ice;
+  r.ratioLabel = iced ? `1:${+((water+ice)/dose).toFixed(1)}` : "1:" + +(water/dose).toFixed(1);
+  r.ratioSub = iced ? `1:${+(water/dose).toFixed(1)} brew + ice` : "";
+  r.timeLabel = fmt(r.total - 15) + "–" + fmt(r.total + 20);
+  r.prep = ["Rinse the paper, valve closed.", "Water first, then coffee, prevents clogging."];
+  if (iced) r.prep.unshift(`Put ${ice} g of ice in the server.`);
+  r.why.push(`Full immersion for ${fmt(steep)} before draining gives an even, forgiving extraction.`);
+}
+function aero(r, ta, dose, ratio, iced){
+  const CAP = 230;
+  let water = iced ? Math.round(dose*7.5) : Math.round(dose*ratio);
+  let bypass = 0;
+  if (water > CAP){ bypass = water - CAP; water = CAP; }
+  const ice = iced ? r5(dose*6) : 0;
+  const steep = 90 + ta.steep*2;
+  r.steps = [
+    {s:0, a:`Add ${water} g water, stir 5 times.`, w:water},
+    {s:10, a:"Insert the plunger about 1 cm to stop dripping.", w:null},
+    {s:steep-15, a:"Lift and swirl the brewer gently.", w:null},
+    {s:steep, a:`Press slowly for about 30 s${iced?" straight onto the ice":""}. Stop at the hiss.`, w:null},
+    ...(bypass ? [{s:steep+30, a:`Top up with ${bypass} g hot water.`, w:water+bypass}] : []),
+    {s:steep+30, a:"Done.", w:null, end:true}
+  ].map(x => ({...x, t:fmt(x.s), w:x.w ? x.w+" g" : ""}));
+  r.total = steep+30; r.water = water + bypass; r.ice = ice;
+  r.ratioLabel = iced ? `1:${+((water+ice)/dose).toFixed(1)}` : "1:" + +((water+bypass)/dose).toFixed(1);
+  r.ratioSub = iced ? `1:${+(water/dose).toFixed(1)} brew + ice` : bypass ? `${bypass} g bypass` : "";
+  r.timeLabel = fmt(r.total);
+  r.prep = ["Rinse the paper filter in the cap.", "Standard position on a sturdy cup."];
+  if (iced) r.prep.unshift(`Put ${ice} g ice in the cup you press into.`);
+  if (bypass) r.why.push(`AeroPress holds about ${CAP} g, so ${bypass} g goes in after pressing as bypass.`);
+  r.why.push("AeroPress runs cooler: pressure and agitation already extract efficiently.");
+}
+function frenchHot(r, ta, dose, ratio){
+  const water = Math.round(dose*ratio);
+  const wait = 300 + ta.steep*6;
+  r.steps = [
+    {s:0, a:`Add ${water} g water, all at once, no stirring.`, w:water},
+    {s:240, a:"Stir the crust, then skim the foam off the top with two spoons.", w:null},
+    {s:240+wait, a:"Place the plunger just at the surface and pour slowly through the mesh.", w:null, end:true}
+  ].map(x => ({...x, t:fmt(x.s), w:x.w ? x.w+" g" : ""}));
+  r.total = 240+wait; r.water = water;
+  r.ratioLabel = "1:" + +(water/dose).toFixed(1); r.timeLabel = fmt(r.total);
+  r.prep = ["Preheat the press with hot water and discard it.", "Grind coarse, like breadcrumbs."];
+  r.why.push("Long, still wait after skimming lets fines settle, so the cup is clean without pressing hard.");
+}
+
+/* ---------- render ---------- */
+function render(){
+  const b = bean(), r = compute(), br = r.brewer;
+  $("rTitle").textContent = b.name || "Your coffee";
+  $("rMeta").textContent = [b.roaster, b.origin, b.variety, b.alt && (b.alt + " masl")].filter(Boolean).join(" · ") || "Add details for a sharper recipe";
+  const coldBrew = r.iced && state.brewer==="press";
+  $("cardKicker").textContent = coldBrew ? "Cold brew recipe" : (r.iced ? "Iced " : "Hot ") + br.name + " recipe";
+  $("rTags").innerHTML = [PROCESS[b.process].name, ROAST[b.roast].name + " roast", TASTE[state.taste].name, ...(b.notes ? b.notes.split(/[,،]/).map(s=>s.trim()).filter(Boolean).slice(0,4) : [])]
+    .map(t => `<span class="tag">${esc(t)}</span>`).join("");
+  const g = GRINDERS[state.grinder];
+  const cells = [
+    ["Coffee", r.dose, "g", ""],
+    [r.iced && !coldBrew ? "Hot water" : "Water", r.water, "g", coldBrew ? "cold" : ""],
+    r.iced && !coldBrew ? ["Ice", r.ice, "g", "in the server"] : ["Ratio", r.ratioLabel, "", r.ratioSub||""],
+    ["Water temp", r.temp == null ? "cold" : r.temp, r.temp == null ? "" : "°C", r.temp == null ? "" : Math.round(r.temp*9/5+32) + " °F"],
+    ["Grind", r.grind, "µm", (g ? g.name + ": " + g.f(r.grind) : grindWord(r.grind))],
+    ["Total time", r.timeLabel, "", r.timeSub || ""]
+  ];
+  if (r.iced && !coldBrew) cells[5][3] = "final ratio " + r.ratioLabel;
+  $("lcd").innerHTML = cells.map(([k,v,u,s]) => `<div><span class="k">${k}</span><span class="v">${esc(v)}${u?`<small>${u}</small>`:""}</span><span class="s">${esc(s)||"&nbsp;"}</span></div>`).join("");
+  $("prep").innerHTML = r.prep.map(p => `<li>${esc(p)}</li>`).join("");
+  $("steps").innerHTML = r.steps.map((s,i) => `<li data-i="${i}" data-s="${s.s ?? ""}"><span class="t">${esc(s.t)}</span><span>${esc(s.a)}</span><span class="w">${esc(s.w)}</span></li>`).join("");
+  $("why").innerHTML = r.why.filter(Boolean).map(w => `<li><span>${esc(w)}</span></li>`).join("");
+  $("chartSec").hidden = !(br.kind === "pour" && !coldBrew);
+  if (!$("chartSec").hidden) drawChart(r);
+  $("timerSec").hidden = !r.timer;
+  $("applied").hidden = !state.adj.log.length;
+  $("appliedText").textContent = state.adj.log.length ? "Adjusted: " + state.adj.log.join(", ") : "";
+  current = r; resetTimer(); $("notes").textContent = "";
+  try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder})); } catch(e){}
+}
+
+function drawChart(r){
+  const W=600,H=170,L=44,R=14,T=14,B=30, pts=r.steps.filter(s=>!s.end);
+  const tMax = r.total, wMax = r.water;
+  const x = s => L + (s/tMax)*(W-L-R), y = w => H-B - (w/wMax)*(H-T-B);
+  let d = `M${x(0)},${y(0)}`, cum = 0;
+  for (const p of pts){ const w = parseInt(p.w); d += ` L${x(p.s)},${y(cum)} L${x(p.s+p.dur)},${y(w)}`; cum = w; }
+  d += ` L${x(tMax)},${y(cum)}`;
+  const area = d + ` L${x(tMax)},${y(0)} Z`;
+  const ticks = pts.map(p => `<line x1="${x(p.s)}" x2="${x(p.s)}" y1="${T}" y2="${H-B}" class="grid"/><text x="${x(p.s)}" y="${H-10}" text-anchor="middle" class="tx">${fmt(p.s)}</text>`).join("");
+  const labels = pts.map(p => `<text x="${x(p.s+p.dur)+4}" y="${y(parseInt(p.w))-6}" class="tw">${parseInt(p.w)}</text>`).join("");
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative water poured over time">
+  <style>.grid{stroke:var(--line);stroke-dasharray:2 4}.tx{fill:var(--muted);font:11px var(--f-mono)}.tw{fill:var(--ink);font:600 11px var(--f-mono)}.ax{stroke:var(--muted)}</style>
+  ${ticks}
+  <line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" class="ax"/>
+  <text x="${L-6}" y="${y(wMax)+4}" text-anchor="end" class="tx">${wMax}g</text>
+  <text x="${L-6}" y="${H-B+4}" text-anchor="end" class="tx">0</text>
+  <text x="${x(tMax)}" y="${H-10}" text-anchor="end" class="tx">${fmt(tMax)}</text>
+  <path d="${area}" fill="var(--accent-soft)"/>
+  <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+  ${labels}
+  </svg>`;
+}
+
+/* ---------- controls ---------- */
+function bindSeg(id, key){
+  const el = $(id);
+  const sync = () => el.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state[key])));
+  el.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state[key] = b.dataset.v; sync(); render(); });
+  return sync;
+}
+const syncers = [bindSeg("tempMode","mode"), bindSeg("taste","taste"), bindSeg("brewer","brewer")];
+const syncAll = () => syncers.forEach(f => f());
+$("dose").addEventListener("input", () => { const v = parseFloat($("dose").value); if (v > 0) { state.dose = v; render(); }});
+$("dose").addEventListener("blur", () => { $("dose").value = state.dose; });
+$("doseDown").onclick = () => { state.dose = clamp(state.dose - 1, 5, 120); $("dose").value = state.dose; render(); };
+$("doseUp").onclick = () => { state.dose = clamp(state.dose + 1, 5, 120); $("dose").value = state.dose; render(); };
+$("grinder").onchange = () => { state.grinder = $("grinder").value; render(); };
+["bName","bRoaster","bOrigin","bProcess","bRoast","bVariety","bAlt","bNotes"].forEach(id => $(id).addEventListener("input", () => { if (state.example){ state.example=false; $("exampleTag").hidden = true; } render(); }));
+
+const DIAL = {
+  sour:{grind:-50, temp:1, ratio:0, txt:"finer and hotter"},
+  bitter:{grind:50, temp:-2, ratio:0, txt:"coarser and cooler"},
+  weak:{grind:0, temp:0, ratio:-1, txt:"stronger ratio"},
+  strong:{grind:0, temp:0, ratio:1, txt:"longer ratio"}
+};
+$("dial").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return; const d = DIAL[b.dataset.v];
+  state.adj.grind += d.grind; state.adj.temp += d.temp; state.adj.ratio += d.ratio; state.adj.log.push(d.txt); render();
+});
+$("dialReset").onclick = () => { state.adj = {grind:0,temp:0,ratio:0,log:[]}; render(); };
+
+/* ---------- timer ---------- */
+let current = null, tStart = 0, tId = 0, wake = null;
+function resetTimer(){
+  clearInterval(tId); tId = 0; tStart = 0; $("clock").textContent = "0:00"; $("tStart").textContent = "Start brew timer";
+  $("next").innerHTML = "Start when your first pour begins.";
+  document.querySelectorAll("#steps li").forEach(li => li.classList.remove("now","done"));
+  try { wake?.release(); } catch(e){} wake = null;
+}
+function tick(){
+  const el = (performance.now() - tStart)/1000; $("clock").textContent = fmt(el);
+  const steps = current.steps; let idx = 0;
+  steps.forEach((s,i) => { if (s.s <= el) idx = i; });
+  document.querySelectorAll("#steps li").forEach((li,i) => { li.classList.toggle("now", i===idx); li.classList.toggle("done", i<idx); });
+  const nx = steps[idx+1];
+  if (nx) $("next").innerHTML = `Now: <b>${esc(steps[idx].a)}</b><br>Next in ${fmt(nx.s - el)}${nx.w?` · to ${esc(nx.w)}`:""}`;
+  else { $("next").innerHTML = "<b>Enjoy your cup.</b>"; clearInterval(tId); tId = 0; $("tStart").textContent = "Start again"; }
+}
+$("tStart").onclick = async () => {
+  if (tId){ resetTimer(); return; }
+  resetTimer(); tStart = performance.now(); tId = setInterval(tick, 250); tick(); $("tStart").textContent = "Stop";
+  try { wake = await navigator.wakeLock?.request("screen"); } catch(e){}
+};
+$("tReset").onclick = resetTimer;
+
+/* ---------- saved recipes ---------- */
+const loadSaved = () => { try { return JSON.parse(localStorage.getItem("brewprint.saved")||"[]"); } catch(e){ return []; } };
+$("save").onclick = () => {
+  const list = loadSaved(); const b = bean();
+  list.unshift({id:Date.now(), bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder, adj:state.adj});
+  try { localStorage.setItem("brewprint.saved", JSON.stringify(list.slice(0,50))); $("saveStatus").textContent = "Saved to My recipes on this device."; }
+  catch(e){ $("saveStatus").textContent = "This browser blocked saving. Try outside a private window."; }
+};
+function showSaved(){
+  const list = loadSaved(), ul = $("savedList");
+  if (!list.length){ ul.innerHTML = `<li class="empty">No saved recipes yet. Build one and tap “Save recipe”.</li>`; }
+  else ul.innerHTML = list.map(x => `<li><div class="info"><b>${esc(x.bean.name||"Untitled coffee")}</b><small>${esc(BREWERS[x.brewer].name)} · ${x.mode==="iced"?"Iced":"Hot"} · ${esc(TASTE[x.taste].name)} · ${x.dose} g</small></div><button class="ghost" type="button" data-load="${x.id}">Open</button><button class="ghost" type="button" data-del="${x.id}" aria-label="Delete">✕</button></li>`).join("");
+  $("savedDlg").showModal();
+}
+$("openSaved").onclick = showSaved;
+$("closeSaved").onclick = () => $("savedDlg").close();
+$("savedList").addEventListener("click", e => {
+  const l = e.target.closest("[data-load]"), d = e.target.closest("[data-del]");
+  if (l){ const x = loadSaved().find(r => String(r.id) === l.dataset.load); if (!x) return;
+    setBean(x.bean); Object.assign(state, {mode:x.mode, taste:x.taste, brewer:x.brewer, dose:x.dose, grinder:x.grinder, adj:x.adj||{grind:0,temp:0,ratio:0,log:[]}, example:false});
+    $("dose").value = x.dose; $("grinder").value = x.grinder; $("exampleTag").hidden = true; syncAll(); render(); $("savedDlg").close(); }
+  if (d){ const list = loadSaved().filter(r => String(r.id) !== d.dataset.del); try { localStorage.setItem("brewprint.saved", JSON.stringify(list)); } catch(e){} showSaved(); }
+});
+
+/* ---------- free bag reader: on-device text recognition + coffee rules (bagparse.js) ---------- */
+const TESS_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+let ocrWorker = null, ocrBusy = false;
+const st = $("photoStatus");
+const say = (t, err) => { st.textContent = t; st.classList.toggle("err", !!err); };
+
+function loadScript(src){
+  return new Promise((ok, bad) => {
+    if (window.Tesseract) return ok();
+    const s = document.createElement("script"); s.src = src; s.async = true;
+    s.onload = () => ok(); s.onerror = () => bad({code:"load"}); document.head.appendChild(s);
+  });
+}
+let lastPct = -1;
+function progress(m){
+  const pct = Math.round((m.progress || 0) * 100);
+  if (pct === lastPct && m.status !== "recognizing text") return; lastPct = pct;
+  if (/load|download|initializ/i.test(m.status || "")) say(`Getting the text reader ready (first time only, about 10 MB)… ${pct}%`);
+  else if (m.status === "recognizing text") say(`Reading the bag… ${pct}%`);
+}
+async function getWorker(){
+  if (ocrWorker) return ocrWorker;
+  await loadScript(TESS_URL);
+  ocrWorker = await window.Tesseract.createWorker(["eng", "ara"], 1, {logger: progress});
+  return ocrWorker;
+}
+
+/* grayscale + contrast stretch, max 2000px: helps the reader with glossy, low-contrast bags */
+async function prepImage(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = url; });
+    const s = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth*s); c.height = Math.round(img.naturalHeight*s);
+    const g = c.getContext("2d", {willReadFrequently:true}); g.drawImage(img, 0, 0, c.width, c.height);
+    const d = g.getImageData(0, 0, c.width, c.height), px = d.data, hist = new Uint32Array(256);
+    for (let i = 0; i < px.length; i += 4){ const y = (px[i]*299 + px[i+1]*587 + px[i+2]*114) / 1000 | 0; px[i] = y; hist[y]++; }
+    const n = px.length/4; let lo = 0, hi = 255, acc = 0;
+    while (lo < 255 && (acc += hist[lo]) < n*0.01) lo++;
+    acc = 0; while (hi > 0 && (acc += hist[hi]) < n*0.01) hi--;
+    const span = Math.max(1, hi - lo);
+    for (let i = 0; i < px.length; i += 4){ const v = clamp(Math.round((px[i]-lo)*255/span), 0, 255); px[i] = px[i+1] = px[i+2] = v; }
+    g.putImageData(d, 0, 0);
+    return c;
+  } catch(e){ throw {code:"bad_image"}; }
+  finally { setTimeout(() => URL.revokeObjectURL(url), 30000); }
+}
+
+const FIELD_NAMES = {origin:"origin", process:"process", roast:"roast level", variety:"variety", altitude:"altitude", notes:"tasting notes"};
+function applyParsed(p, from){
+  const cur = bean();
+  if (!p.found.length){
+    say(from === "photo"
+      ? "Couldn't read enough from this photo. Try again close up, straight on, in good light, or paste the text below."
+      : "Couldn't find coffee details in that text. Check it, or fill the fields yourself.", true);
+    return;
+  }
+  setBean({name:p.name || "", roaster:"", origin:p.origin || "", process:p.process || cur.process, roast:p.roast || cur.roast,
+    variety:p.variety || "", alt:p.altitude ? String(p.altitude) : "", notes:(p.notes || []).join(", ")});
+  state.example = false; $("exampleTag").hidden = true;
+  const missing = Object.keys(FIELD_NAMES).filter(k => !p.found.includes(k)).map(k => FIELD_NAMES[k]);
+  const keyMissing = missing.filter(m => m === "process" || m === "roast level");
+  say("Filled in from your " + (from === "photo" ? "bag" : "text") + ". Check the fields"
+    + (keyMissing.length ? `; ${keyMissing.join(" and ")} wasn't found, so pick ${keyMissing.length > 1 ? "them" : "it"} yourself.` : ".")
+    + (from === "photo" ? " Add the roaster if you like." : ""));
+  render();
+}
+
+async function readBag(file){
+  if (ocrBusy) return;
+  ocrBusy = true; lastPct = -1;
+  const url = URL.createObjectURL(file); $("thumb").innerHTML = `<img alt="Your coffee bag" src="${url}">`;
+  say("Preparing the photo…");
+  try {
+    const canvas = await prepImage(file);
+    const w = await getWorker();
+    say("Reading the bag…");
+    const { data } = await w.recognize(canvas);
+    applyParsed(window.parseBag(data.text || ""), "photo");
+  } catch(e){
+    if (e?.code === "bad_image") say("That image couldn't be opened. Try a JPEG or PNG photo.", true);
+    else if (e?.code === "load" || navigator.onLine === false) say("The text reader needs internet the first time. Connect once, then it works offline.", true);
+    else say("Couldn't read this photo. Try again, or paste the text below.", true);
+    if (ocrWorker && e?.code !== "bad_image"){ try { await ocrWorker.terminate(); } catch(_){} ocrWorker = null; }
+  } finally { ocrBusy = false; }
+}
+
+const drop = $("drop");
+["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove("over")));
+drop.addEventListener("drop", e => { e.preventDefault(); const f = e.dataTransfer?.files?.[0]; if (f) readBag(f); });
+$("photo").addEventListener("change", e => { const f = e.target.files?.[0]; if (f) readBag(f); e.target.value = ""; });
+$("fillFromText").onclick = () => {
+  const t = $("bagText").value.trim();
+  if (!t){ say("Paste the text from the bag first.", true); return; }
+  applyParsed(window.parseBag(t), "text");
+};
+
+/* ---------- install prompt ---------- */
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+let installEvt = null;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+let dismissed = false; try { dismissed = localStorage.getItem("brewprint.installDismissed") === "1"; } catch(e){}
+function showInstall(text, canPrompt){
+  if (standalone || dismissed) return;
+  $("installText").innerHTML = text; $("installBtn").hidden = !canPrompt; $("install").hidden = false;
+}
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; showInstall("<b>Install Brewprint</b> on your home screen. It works offline.", true); });
+if (isIOS) showInstall("<b>Install on iPhone:</b> tap Share, then <b>Add to Home Screen</b>.", false);
+$("installBtn").onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice.catch(()=>{}); installEvt = null; $("install").hidden = true; };
+$("installClose").onclick = () => { $("install").hidden = true; try { localStorage.setItem("brewprint.installDismissed","1"); } catch(e){} };
+addEventListener("appinstalled", () => { $("install").hidden = true; });
+
+if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+/* ---------- boot ---------- */
+let draft = null;
+try { draft = JSON.parse(localStorage.getItem("brewprint.draft")||"null"); } catch(e){}
+if (draft && draft.bean && draft.bean.name && draft.bean.name !== EXAMPLE.name){
+  setBean(draft.bean); Object.assign(state, {mode:draft.mode||"hot", taste:draft.taste||"classic", brewer:draft.brewer||"v60", dose:draft.dose||18, grinder:draft.grinder==="comandante"?"timemore":(draft.grinder||"timemore"), example:false});
+  $("exampleTag").hidden = true;
+} else setBean(EXAMPLE);
+$("dose").value = state.dose; $("grinder").value = state.grinder;
+syncAll(); render();
+})();
+</script>
+</body>
+</html>
