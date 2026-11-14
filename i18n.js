@@ -101,6 +101,23 @@ window.I18N_AR = {
   "Looks for a country or known region, process, roast level, altitude (400 to 3,200 m), up to 3 varieties and up to 5 tasting notes.": "يبحث عن الدولة أو منطقة معروفة، والمعالجة، ودرجة التحميص، والارتفاع (من 400 إلى 3,200 متر)، وحتى 3 سلالات و5 إيحاءات.",
   "The roaster's name isn't read; type it if you like.": "لا يقرأ اسم المحمصة؛ اكتبه إن أردت.",
 
+  /* My beans (محاصيلي) */
+  "My beans": "محاصيلي",
+  "From my beans": "من محاصيلي",
+  "Manage": "إدارة",
+  "Save to My beans": "احفظ في محاصيلي",
+  "Update in My beans": "حدّث في محاصيلي",
+  "Save your beans to pick them in one tap next time.": "احفظ البن الخاص بك لتختاره بضغطة واحدة في المرة القادمة.",
+  "Give the coffee a name first.": "أعطِ القهوة اسماً أولاً.",
+  "Updated in My beans.": "تم التحديث في محاصيلي.",
+  "Saved to My beans.": "تم الحفظ في محاصيلي.",
+  "Use": "استخدم",
+  "No beans saved yet. Fill in your beans, or scan the bag, then tap “Save to My beans”.": "لا يوجد بن محفوظ بعد. عبّئ بيانات البن أو صوّر الكيس، ثم اضغط «احفظ في محاصيلي».",
+  "5. My beans": "5. محاصيلي",
+  "Save your beans on this phone, then pick them in one tap from the top of “Your beans”, in Customize or Match my beans.": "احفظ البن على جوالك، ثم اختره بضغطة واحدة من أعلى قسم «البن الخاص بك» في «خصّص وصفتك» أو «طابق مع البن الخاص بي».",
+  "Saving a coffee with the same name and roaster updates it instead of adding a copy. A scanned bag keeps a small photo.": "حفظ قهوة بنفس الاسم والمحمصة يحدّثها بدل إضافة نسخة. والكيس المصوّر يُحفظ معه صورة صغيرة.",
+  "Saved beans and recipes stay on this phone only; deleting the app or clearing browser data removes them.": "البن والوصفات المحفوظة تبقى على هذا الجوال فقط؛ حذف التطبيق أو مسح بيانات المتصفح يحذفها.",
+
   /* recipe card */
   "Recipe": "الوصفة",
   "Pour curve": "منحنى الصب", "Before you start": "قبل أن تبدأ", "Steps": "الخطوات",
@@ -124,8 +141,8 @@ window.I18N_AR = {
   "Close": "إغلاق", "Open": "فتح", "Delete": "حذف",
   "No saved recipes yet. Build one and tap “Save recipe”.": "لا توجد وصفات محفوظة بعد. جهّز وصفة واضغط «احفظ الوصفة».",
   "Famous recipe": "وصفة مشهورة", "Untitled coffee": "قهوة بدون اسم",
-  "Brewprint v7 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
-    "Brewprint الإصدار 7 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
+  "Brewprint v8 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
+    "Brewprint الإصدار 8 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
 
   /* card labels */
   "Famous recipe · Hot V60": "وصفة مشهورة · V60 حار", "Famous recipe · Iced V60": "وصفة مشهورة · V60 بارد",

@@ -90,6 +90,16 @@ button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
 .lc-why{font-size:13px;color:var(--ink)}
 .lc-why b{color:var(--accent)}
 #helpDlg{width:min(720px,calc(100vw - 24px))}
+.mybeans{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mb-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mb-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.mb-chips::-webkit-scrollbar{display:none}
+.beanchip{flex:none;display:inline-flex;align-items:center;gap:7px;max-width:220px}
+.beanchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.beanchip img,.beanchip i{width:22px;height:22px;border-radius:50%;object-fit:cover;flex:none;background:var(--sunk);display:inline-block}
+.mb-save{align-items:center}
+.bthumb{width:46px;height:46px;border-radius:8px;object-fit:cover;flex:none;background:var(--sunk);display:grid;place-items:center;font-size:20px}
+#beansList .info small{display:block}
 .help{padding:14px 18px 22px;max-height:78vh;overflow:auto;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.55}
 .help h4{margin:12px 0 0;font-family:var(--f-display);font-size:17px}
 .help p,.help ul{margin:0}
@@ -254,7 +264,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
     <h1>Brew<span>print</span></h1>
     <p data-i18n>Tell it about your beans and how you like your cup. It builds the dose, grind, temperature and every pour.</p>
   </div>
-  <div class="hbtns"><button class="ghost" id="langBtn" type="button" lang="ar">العربية</button><button class="ghost" id="openSaved" type="button" data-i18n>My recipes</button><button class="ghost" id="openHelp" type="button" data-i18n>How it works</button></div>
+  <div class="hbtns"><button class="ghost" id="langBtn" type="button" lang="ar">العربية</button><button class="ghost" id="openBeans" type="button" data-i18n>My beans</button><button class="ghost" id="openSaved" type="button" data-i18n>My recipes</button><button class="ghost" id="openHelp" type="button" data-i18n>How it works</button></div>
 </header>
 <div class="install" id="install" hidden><span id="installText"></span><button class="primary" type="button" id="installBtn" hidden>Install</button><button class="x" type="button" id="installClose" aria-label="Dismiss" data-i18n-aria>✕</button></div>
 
@@ -287,6 +297,10 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 
   <section class="block" id="beansBlock">
     <div class="block-head"><span class="n">1</span><h2 data-i18n>Your beans</h2><span class="example" id="exampleTag" data-i18n>Example bag, replace with yours</span></div>
+    <div class="mybeans" id="myBeansBar">
+      <div class="mb-head"><span class="label" data-i18n>From my beans</span><button class="link" type="button" id="manageBeans" data-i18n>Manage</button></div>
+      <div class="mb-chips" id="myBeansChips"></div>
+    </div>
     <label class="drop" id="drop">
       <div class="thumb" id="thumb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
       <div><strong data-i18n>Snap or upload the bag</strong><small id="dropHint" data-i18n>Reads origin, process, roast and notes right on your phone. Free, English or Arabic.</small></div>
@@ -311,6 +325,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       <div class="field"><label for="bAlt" data-i18n>Altitude (masl)</label><input id="bAlt" inputmode="numeric" placeholder="Optional" data-i18n-ph></div>
       <div class="field wide"><label for="bNotes" data-i18n>Tasting notes on the bag</label><input id="bNotes" dir="auto" placeholder="e.g. blueberry, jasmine, cocoa" data-i18n-ph></div>
     </div>
+    <div class="actions mb-save"><button class="ghost" type="button" id="saveBean">Save to My beans</button><span class="status" id="beanStatus" role="status"></span></div>
     <datalist id="origins"><option>Ethiopia</option><option>Kenya</option><option>Colombia</option><option>Brazil</option><option>Yemen</option><option>Panama</option><option>Costa Rica</option><option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Rwanda</option><option>Burundi</option><option>Peru</option><option>Bolivia</option><option>Indonesia</option><option>Mexico</option><option>Nicaragua</option><option>Uganda</option><option>Tanzania</option><option>India</option><option>Ecuador</option><option>China</option></datalist>
   </section>
 
@@ -398,8 +413,13 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer data-i18n>Brewprint v7 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer data-i18n>Brewprint v8 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
+
+<dialog id="beansDlg">
+  <div class="dlg-h"><h3 data-i18n>My beans</h3><button class="ghost" type="button" id="closeBeans" data-i18n>Close</button></div>
+  <ul class="saved" id="beansList"></ul>
+</dialog>
 
 <dialog id="helpDlg">
   <div class="dlg-h"><h3 data-i18n>How it works</h3><button class="ghost" type="button" id="closeHelp" data-i18n>Close</button></div>
@@ -806,8 +826,9 @@ function render(){
   $("applied").hidden = !state.adj.log.length;
   $("appliedText").textContent = state.adj.log.length ? T("Adjusted: {list}", {list:state.adj.log.map(x => T(x)).join(T(", "))}) : "";
   current = r; resetTimer(); $("notes").textContent = "";
+  renderBeanChips();
   try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder,
-    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter, libView:state.libView})); } catch(e){}
+    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter, libView:state.libView, beanId:currentBeanId})); } catch(e){}
 }
 
 function drawChart(r){
@@ -984,6 +1005,11 @@ function renderHelp(){
     T("Looks for a country or known region, process, roast level, altitude (400 to 3,200 m), up to 3 varieties and up to 5 tasting notes."),
     T("The roaster's name isn't read; type it if you like.")
   ]));
+  h.push(`<h4>${esc(T("5. My beans"))}</h4>` + li([
+    T("Save your beans on this phone, then pick them in one tap from the top of “Your beans”, in Customize or Match my beans."),
+    T("Saving a coffee with the same name and roaster updates it instead of adding a copy. A scanned bag keeps a small photo."),
+    T("Saved beans and recipes stay on this phone only; deleting the app or clearing browser data removes them.")
+  ]));
   $("helpBody").innerHTML = h.join("");
 }
 $("openHelp").onclick = () => { renderHelp(); $("helpDlg").showModal(); };
@@ -1076,6 +1102,7 @@ async function readBag(file){
   say(T("Preparing the photo…"));
   try {
     const canvas = await prepImage(file);
+    lastThumb = await makeThumb(file); currentBeanId = null;
     const w = await getWorker();
     say(T("Reading the bag…"));
     const { data } = await w.recognize(canvas);
@@ -1096,6 +1123,7 @@ $("photo").addEventListener("change", e => { const f = e.target.files?.[0]; if (
 $("fillFromText").onclick = () => {
   const t = $("bagText").value.trim();
   if (!t){ say(T("Paste the text from the bag first."), true); return; }
+  currentBeanId = null; lastThumb = null; resetThumb();
   applyParsed(window.parseBag(t), "text");
 };
 
@@ -1123,6 +1151,75 @@ addEventListener("appinstalled", () => { $("install").hidden = true; });
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(()=>{});
 
+/* ---------- My beans (محاصيلي): a bean library saved on this device ---------- */
+const BEANS_KEY = "brewprint.beans";
+const loadBeans = () => { try { return JSON.parse(localStorage.getItem(BEANS_KEY) || "[]"); } catch(e){ return []; } };
+const storeBeans = list => { try { localStorage.setItem(BEANS_KEY, JSON.stringify(list)); return true; } catch(e){ return false; } };
+let currentBeanId = null, lastThumb = null;
+const defaultThumb = $("thumb").innerHTML;
+const resetThumb = () => { $("thumb").innerHTML = defaultThumb; };
+const same = (a, b) => (a || "").trim().toLowerCase() === (b || "").trim().toLowerCase();
+// a small square photo of the bag (about 5 KB) so saved beans are easy to spot
+async function makeThumb(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = url; });
+    const S = 112, side = Math.min(img.naturalWidth, img.naturalHeight);
+    const c = document.createElement("canvas"); c.width = c.height = S;
+    c.getContext("2d").drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, S, S);
+    return c.toDataURL("image/jpeg", .7);
+  } catch(e){ return null; } finally { URL.revokeObjectURL(url); }
+}
+const beanLine = b => [b.roaster, b.origin, PROCESS[b.process] ? T(PROCESS[b.process].name) : "", ROAST[b.roast] ? T("{r} roast", {r:T(ROAST[b.roast].name)}) : ""].filter(Boolean).join(" · ");
+// the loaded saved bean, only while its name still matches what's typed (a new name means a new bean)
+function loadedBean(){ const x = loadBeans().find(e => e.id === currentBeanId); return x && same(x.bean.name, $("bName").value) ? x : null; }
+function renderBeanChips(){
+  const list = loadBeans(), cur = loadedBean();
+  $("myBeansChips").innerHTML = list.length
+    ? list.map(x => `<button type="button" class="kw beanchip" data-bean="${x.id}" aria-pressed="${!!cur && x.id === cur.id}">${x.thumb ? `<img src="${x.thumb}" alt="">` : "<i></i>"}<span>${esc(x.bean.name || T("Untitled coffee"))}</span></button>`).join("")
+    : `<span class="hint">${esc(T("Save your beans to pick them in one tap next time."))}</span>`;
+  $("manageBeans").hidden = !list.length;
+  $("saveBean").textContent = T(cur ? "Update in My beans" : "Save to My beans");
+}
+function useBean(id){
+  const x = loadBeans().find(b => b.id === id); if (!x) return;
+  setBean(x.bean); currentBeanId = x.id; lastThumb = x.thumb || null;
+  state.example = false; $("exampleTag").hidden = true;
+  $("thumb").innerHTML = x.thumb ? `<img alt="${esc(T("Your coffee bag"))}" src="${x.thumb}">` : defaultThumb;
+  say(""); $("beanStatus").textContent = "";
+  // beans only matter in Customize and Match my beans
+  if (state.brewMode === "library" && state.libView !== "match") state.libView = "match";
+  render();
+}
+$("myBeansChips").addEventListener("click", e => { const c = e.target.closest("[data-bean]"); if (c) useBean(c.dataset.bean); });
+$("saveBean").onclick = () => {
+  const b = bean();
+  if (!b.name){ $("beanStatus").textContent = T("Give the coffee a name first."); $("bName").focus(); return; }
+  const list = loadBeans();
+  let x = loadedBean() && list.find(e => e.id === currentBeanId);
+  if (!x) x = list.find(e => same(e.bean.name, b.name) && same(e.bean.roaster, b.roaster));
+  let msg;
+  if (x){ x.bean = b; x.updated = Date.now(); if (lastThumb) x.thumb = lastThumb; msg = T("Updated in My beans."); }
+  else { x = {id:"b" + Date.now(), bean:b, thumb:lastThumb, added:Date.now()}; list.unshift(x); msg = T("Saved to My beans."); }
+  currentBeanId = x.id;
+  $("beanStatus").textContent = storeBeans(list) ? msg : T("This browser blocked saving. Try outside a private window.");
+  renderBeanChips();
+};
+function showBeans(open = true){
+  const list = loadBeans(), ul = $("beansList");
+  ul.innerHTML = list.length ? list.map(x => `<li>${x.thumb ? `<img class="bthumb" src="${x.thumb}" alt="">` : `<span class="bthumb" aria-hidden="true">☕</span>`}<div class="info"><b>${esc(x.bean.name || T("Untitled coffee"))}</b><small>${esc(beanLine(x.bean))}</small>${x.bean.notes ? `<small>${esc(x.bean.notes)}</small>` : ""}</div><button class="ghost" type="button" data-use="${x.id}">${esc(T("Use"))}</button><button class="ghost" type="button" data-delbean="${x.id}" aria-label="${esc(T("Delete"))}">✕</button></li>`).join("")
+    : `<li class="empty">${esc(T("No beans saved yet. Fill in your beans, or scan the bag, then tap “Save to My beans”."))}</li>`;
+  if (open) $("beansDlg").showModal();
+}
+$("openBeans").onclick = () => showBeans();
+$("manageBeans").onclick = () => showBeans();
+$("closeBeans").onclick = () => $("beansDlg").close();
+$("beansList").addEventListener("click", e => {
+  const u = e.target.closest("[data-use]"), d = e.target.closest("[data-delbean]");
+  if (u){ useBean(u.dataset.use); $("beansDlg").close(); $("beansBlock").scrollIntoView({behavior: smooth(), block: "start"}); }
+  if (d){ storeBeans(loadBeans().filter(b => b.id !== d.dataset.delbean)); if (currentBeanId === d.dataset.delbean) currentBeanId = null; showBeans(false); renderBeanChips(); }
+});
+
 /* ---------- apply language to the static page ---------- */
 function applyLang(){
   const root = document.documentElement;
@@ -1144,6 +1241,7 @@ $("langBtn").onclick = () => {
   applyLang(); render();
   if ($("savedDlg").open) showSaved(false);
   if ($("helpDlg").open) renderHelp();
+  if ($("beansDlg").open) showBeans(false);
 };
 
 /* ---------- boot ---------- */
@@ -1158,6 +1256,7 @@ if (draft && draft.brewMode){
   if (draft.mode) state.mode = draft.mode;
   if (draft.grinder) state.grinder = draft.grinder === "comandante" ? "timemore" : draft.grinder;
 }
+if (draft && draft.beanId){ const x = loadBeans().find(b => b.id === draft.beanId); if (x){ currentBeanId = x.id; lastThumb = x.thumb || null; if (x.thumb) $("thumb").innerHTML = `<img alt="" src="${x.thumb}">`; } }
 $("dose").value = state.dose; $("grinder").value = state.grinder;
 applyLang(); syncAll(); render();
 window.__T = T; // used by the test page only
