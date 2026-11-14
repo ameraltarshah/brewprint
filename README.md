@@ -4,7 +4,7 @@ Coffee recipes built for your beans, taste and brewer. Installable phone app (PW
 
 - `index.html`: the app (recipe engine, timer, saved recipes)
 - `bagparse.js`: reads coffee details from bag text (English and Arabic)
-- `library.js`: famous recipes with English and Arabic text (add or edit entries here)
+- `library.js`: famous recipes with English and Arabic text, plus the "Best for" keywords (`BREW_KEYWORDS`); each recipe lists its keywords in `use`
 - `i18n.js`: Arabic translations for the app (English text on the left, Arabic on the right)
 - `sw.js`: offline cache. Bump `VERSION` whenever a file changes.
 - `manifest.webmanifest`, `icons/`: home-screen install

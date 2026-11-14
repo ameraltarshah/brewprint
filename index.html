@@ -66,6 +66,19 @@ img{max-width:100%}
 .libcard .lc-blurb{font-size:13.5px;color:var(--muted)}
 .libcard .lc-stats{font-family:var(--f-mono);font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
 .libcard .lc-gear{font-size:12px;color:var(--amber);font-weight:600}
+.kwbar{display:flex;flex-direction:column;gap:8px}
+.kwchips{display:flex;flex-wrap:wrap;gap:6px}
+.kw{font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-weight:500;line-height:1.3}
+button.kw{cursor:pointer}
+button.kw:hover{border-color:var(--ink)}
+button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.kw small{opacity:.7;margin-inline-start:5px;font-family:var(--f-mono);font-size:11px}
+.lc-use{display:flex;flex-wrap:wrap;gap:5px}
+.lc-use .kw{font-size:11.5px;padding:2px 9px;background:var(--bg)}
+.lc-use .kw.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.usefor{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px}
+@media (max-width:600px){#libFilters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+#libFilters::-webkit-scrollbar{display:none}#libFilters .kw{flex:none}}
 .hint{font-size:12px;color:var(--muted)}
 .hbtns{display:flex;gap:8px;flex-wrap:wrap}
 /* numbers, times and ratios stay left-to-right inside Arabic text */
@@ -233,6 +246,11 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       <button type="button" data-v="hot" aria-pressed="true" data-i18n>Hot</button>
       <button type="button" data-v="iced" aria-pressed="false" data-i18n>Iced</button>
     </div>
+    <div class="kwbar">
+      <span class="label" data-i18n>Best for</span>
+      <div class="kwchips" id="libFilters" role="group" aria-label="Filter recipes by what they're best for" data-i18n-aria></div>
+      <div class="hint" id="libCount" role="status"></div>
+    </div>
     <div class="libcards" id="libList" role="list"></div>
   </section>
 
@@ -305,6 +323,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
     <h2 id="rTitle">Guji Hambela</h2>
     <div class="meta" id="rMeta"></div>
     <div class="tags" id="rTags"></div>
+    <div class="usefor" id="rUse" hidden><span class="label" data-i18n>Best for</span><div class="kwchips" id="rUseChips"></div></div>
   </div>
   <div class="lcd" id="lcd"></div>
   <div class="sec" id="chartSec"><h3 data-i18n>Pour curve</h3><div class="chart" id="chart"></div></div>
@@ -332,7 +351,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer data-i18n>Brewprint v4 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer data-i18n>Brewprint v5 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
 
 <dialog id="savedDlg">
@@ -409,12 +428,27 @@ const EXAMPLES = {
 };
 const isExampleName = n => n === EXAMPLES.en.name || n === EXAMPLES.ar.name;
 const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true,
-  brewMode:"library", libId:"hoffmann-ultimate", libDose:30};
+  brewMode:"library", libId:"hoffmann-ultimate", libDose:30, libFilter:""};
 
 /* ---------- recipe library (library.js) ---------- */
 const LIB = window.BREW_LIBRARY || [];
+const KW = window.BREW_KEYWORDS || [];
 const libById = id => LIB.find(x => x.id === id);
 const libForTemp = () => LIB.filter(x => x.temp === state.mode);
+const libVisible = () => libForTemp().filter(x => !state.libFilter || (x.use || []).includes(state.libFilter));
+const kwName = id => { const k = KW.find(k => k.id === id); return k ? (LANG === "ar" ? k.ar : k.en) : id; };
+function renderLibFilters(){
+  const all = libForTemp();
+  const present = KW.filter(k => all.some(x => (x.use || []).includes(k.id)));
+  if (state.libFilter && !present.some(k => k.id === state.libFilter)) state.libFilter = "";
+  const chip = (id, label, n) => `<button type="button" class="kw" data-kw="${id}" aria-pressed="${state.libFilter === id}">${esc(label)}<small>${n}</small></button>`;
+  $("libFilters").innerHTML = chip("", T("All"), all.length)
+    + present.map(k => chip(k.id, kwName(k.id), all.filter(x => x.use.includes(k.id)).length)).join("");
+  const n = libVisible().length;
+  $("libCount").textContent = state.libFilter
+    ? T("{n} recipes best for “{k}”. Tap one to see its steps.", {n, k:kwName(state.libFilter)})
+    : T("{n} recipes. Tap one to see its steps.", {n});
+}
 const doseKey = () => state.brewMode === "library" ? "libDose" : "dose";
 function libRecipe(){
   let rec = libById(state.libId);
@@ -435,12 +469,14 @@ function libRecipe(){
     ratioSub: iced ? T("{r} brew + ice", {r:"1:" + +(water / dose).toFixed(1)}) : ""};
 }
 function renderLibList(){
-  $("libList").innerHTML = libForTemp().map(x => `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
+  renderLibFilters();
+  $("libList").innerHTML = libVisible().map(x => `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
     <span class="lc-top"><span class="lc-name">${esc(L(x, "name"))}</span><span class="lc-time">${esc(L(x, "time"))}</span></span>
     <span class="lc-by">${esc(L(x, "by"))}</span>
     <span class="lc-blurb">${esc(L(x, "blurb"))}</span>
     <span class="lc-stats">${esc(x.ice ? T("{d} g coffee · {w} g water + {i} g ice · {c} °C", {d:x.dose, w:x.water, i:x.ice, c:x.tempC}) : T("{d} g coffee · {w} g water · {c} °C", {d:x.dose, w:x.water, c:x.tempC}))}</span>
-    ${x.gear ? `<span class="lc-gear">${esc(L(x, "gear"))}</span>` : ""}</button>`).join("");
+    ${x.gear ? `<span class="lc-gear">${esc(L(x, "gear"))}</span>` : ""}
+    <span class="lc-use">${(x.use || []).map(u => `<span class="kw${u === state.libFilter ? " on" : ""}">${esc(kwName(u))}</span>`).join("")}</span></button>`).join("");
 }
 function applyModeUI(){
   const lib = state.brewMode === "library";
@@ -611,6 +647,8 @@ function render(){
     $("rMeta").textContent = T("by {who}", {who:L(r.lib, "by")}) + (r.lib.gear ? " · " + L(r.lib, "gear") : "");
     $("cardKicker").textContent = T(r.iced ? "Famous recipe · Iced V60" : "Famous recipe · Hot V60");
     $("rTags").innerHTML = L(r.lib, "tags").map(t => `<span class="tag">${esc(t)}</span>`).join("");
+    $("rUseChips").innerHTML = (r.lib.use || []).map(u => `<button type="button" class="kw" data-kw="${u}" aria-pressed="${u === state.libFilter}">${esc(kwName(u))}</button>`).join("");
+    $("rUse").hidden = !(r.lib.use || []).length;
     $("doseHint").hidden = r.dose === r.lib.dose;
     $("doseHint").textContent = T("Original: {n} g. Everything is scaled to your dose.", {n:r.lib.dose});
     $("rSource").href = r.lib.source;
@@ -621,6 +659,7 @@ function render(){
     $("rTags").innerHTML = [T(PROCESS[b.process].name), T("{r} roast", {r:T(ROAST[b.roast].name)}), T(TASTE[state.taste].name), ...(b.notes ? b.notes.split(/[,،]/).map(s=>s.trim()).filter(Boolean).slice(0,4) : [])]
       .map(t => `<span class="tag">${esc(t)}</span>`).join("");
     $("doseHint").hidden = true;
+    $("rUse").hidden = true;
   }
   $("rSource").hidden = !lib;
   $("whyTitle").textContent = T(lib ? "About this recipe" : "Why these numbers");
@@ -646,7 +685,7 @@ function render(){
   $("appliedText").textContent = state.adj.log.length ? T("Adjusted: {list}", {list:state.adj.log.map(x => T(x)).join(T(", "))}) : "";
   current = r; resetTimer(); $("notes").textContent = "";
   try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder,
-    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose})); } catch(e){}
+    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter})); } catch(e){}
 }
 
 function drawChart(r){
@@ -686,6 +725,17 @@ $("libList").addEventListener("click", e => {
   state.libId = rec.id; state.libDose = rec.dose; render();
   if (matchMedia("(max-width: 959px)").matches)
     document.querySelector(".card").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
+});
+const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+$("libFilters").addEventListener("click", e => {
+  const c = e.target.closest("[data-kw]"); if (!c) return;
+  state.libFilter = c.dataset.kw === state.libFilter ? "" : c.dataset.kw; render();
+});
+// tapping a "Best for" keyword on the open recipe shows every recipe with that keyword
+$("rUseChips").addEventListener("click", e => {
+  const c = e.target.closest("[data-kw]"); if (!c) return;
+  state.libFilter = c.dataset.kw; render();
+  $("libBlock").scrollIntoView({behavior: smooth(), block: "start"});
 });
 $("dose").addEventListener("input", () => { const v = parseFloat($("dose").value); if (v > 0) { state[doseKey()] = v; render(); }});
 $("dose").addEventListener("blur", () => { $("dose").value = state[doseKey()]; });
@@ -913,7 +963,7 @@ if (draft && draft.bean && draft.bean.name && !isExampleName(draft.bean.name)){
   $("exampleTag").hidden = true;
 } else setBean(EXAMPLES[LANG]);
 if (draft && draft.brewMode){
-  Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose});
+  Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose, libFilter:draft.libFilter || ""});
   if (draft.mode) state.mode = draft.mode;
   if (draft.grinder) state.grinder = draft.grinder === "comandante" ? "timemore" : draft.grinder;
 }

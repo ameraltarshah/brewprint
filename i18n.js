@@ -42,6 +42,13 @@ window.I18N_AR = {
   "<b>Install on iPhone:</b> tap Share, then <b>Add to Home Screen</b>.": "<b>للتثبيت على الآيفون:</b> اضغط زر المشاركة، ثم <b>إضافة إلى الشاشة الرئيسية</b>.",
   "<b>Install Brewprint</b> on your home screen. It works offline.": "<b>ثبّت Brewprint</b> على شاشتك الرئيسية. يعمل بدون إنترنت.",
 
+  /* recipe filters ("Best for") */
+  "Best for": "الأنسب لـ",
+  "All": "الكل",
+  "Filter recipes by what they're best for": "صفِّ الوصفات حسب ما تناسبه",
+  "{n} recipes. Tap one to see its steps.": "عدد الوصفات: {n}. اضغط على وصفة لرؤية خطواتها.",
+  "{n} recipes best for “{k}”. Tap one to see its steps.": "الوصفات المناسبة لـ «{k}»: {n}. اضغط على وصفة لرؤية خطواتها.",
+
   /* recipe card */
   "Recipe": "الوصفة",
   "Pour curve": "منحنى الصب", "Before you start": "قبل أن تبدأ", "Steps": "الخطوات",
@@ -65,8 +72,8 @@ window.I18N_AR = {
   "Close": "إغلاق", "Open": "فتح", "Delete": "حذف",
   "No saved recipes yet. Build one and tap “Save recipe”.": "لا توجد وصفات محفوظة بعد. جهّز وصفة واضغط «احفظ الوصفة».",
   "Famous recipe": "وصفة مشهورة", "Untitled coffee": "قهوة بدون اسم",
-  "Brewprint v4 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
-    "Brewprint الإصدار 4 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
+  "Brewprint v5 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
+    "Brewprint الإصدار 5 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
 
   /* card labels */
   "Famous recipe · Hot V60": "وصفة مشهورة · V60 حار", "Famous recipe · Iced V60": "وصفة مشهورة · V60 بارد",

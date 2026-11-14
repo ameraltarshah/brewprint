@@ -6,6 +6,7 @@ window.BREW_LIBRARY = [
   /* ---------------- HOT ---------------- */
   {
     id: "hoffmann-ultimate", temp: "hot", name: "Ultimate V60", by: "James Hoffmann",
+    use: ["light", "fruity", "floral", "washed", "sharing"],
     dose: 30, water: 500, ice: 0, tempC: 100, grind: 600, total: 210, time: "3:30",
     blurb: "Big bloom, two main pours, then a stir and a swirl. Clean, bright and sweet; great for light roasts.",
     tags: ["Clean", "Bright", "2 cups"],
@@ -23,6 +24,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "hoffmann-1cup", temp: "hot", name: "Better 1-Cup V60", by: "James Hoffmann",
+    use: ["onecup", "beginner", "light", "medium", "fruity"],
     dose: 15, water: 250, ice: 0, tempC: 100, grind: 600, total: 180, time: "3:00",
     blurb: "Five small 50 g pours for one mug. Very repeatable, forgiving and sweet.",
     tags: ["Sweet", "Forgiving", "1 cup"],
@@ -42,6 +44,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "kasuya-46", temp: "hot", name: "4:6 Method", by: "Tetsu Kasuya · 2016 World Brewers Cup Champion",
+    use: ["medium", "choc", "natural", "beginner"],
     dose: 20, water: 300, ice: 0, tempC: 92, grind: 900, total: 210, time: "3:30",
     blurb: "Coarse grind and five timed pours. The first 40% sets sweetness vs acidity, the last 60% sets strength.",
     tags: ["Sweet", "Balanced", "Coarse grind"],
@@ -59,6 +62,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "rao-spin", temp: "hot", name: "Rao Spin", by: "Scott Rao",
+    use: ["light", "washed", "floral", "fruity"],
     dose: 20, water: 330, ice: 0, tempC: 97, grind: 575, total: 255, time: "4:00–4:30",
     blurb: "Two big pours with gentle spins to flatten the bed. High extraction, very clean cup.",
     tags: ["High extraction", "Clean", "Plastic V60"],
@@ -76,6 +80,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "hedrick", temp: "hot", name: "Pour Over Masterclass", by: "Lance Hedrick",
+    use: ["quick", "light", "medium", "dark", "beginner"],
     dose: 20, water: 300, ice: 0, tempC: 94, grind: 600, total: 165, time: "2:30–3:00",
     blurb: "Small bloom with a stir, then three spiral pours, each followed by a swirl. Fast and sweet.",
     tags: ["Sweet", "Quick", "1:15"],
@@ -91,9 +96,114 @@ window.BREW_LIBRARY = [
     source: "https://secure.lamose.com/blogs/recipes/lance-hedricks-pour-over-masterclass-v60-technique"
   },
 
+  {
+    id: "winton-5pour", temp: "hot", name: "Five-Pour V60", by: "Matt Winton · 2021 World Brewers Cup Champion",
+    use: ["light", "washed", "floral"],
+    dose: 20, water: 300, ice: 0, tempC: 93, grind: 750, total: 330, time: "~5:30",
+    blurb: "Five equal pours, each poured from a little height. Built for clarity, sweetness and balance.",
+    tags: ["Clarity", "Sweet", "5 equal pours"],
+    prep: ["Rinse the paper and discard the water.", "Medium grind; the recipe was built for light roasts.", "In competition he used 93 °C for the bloom and about 88 °C after. Leave the kettle off its base between pours to let it cool."],
+    steps: [
+      {s: 0, w: 60, dur: 10, text: "Bloom: pour {w} g in circles, from a little height, so every ground is wet."},
+      {s: 30, w: 120, dur: 10, text: "Pour to {w} g: start in the centre, spiral out, then come back to the centre."},
+      {s: 60, w: 180, dur: 10, text: "Pour to {w} g the same way."},
+      {s: 90, w: 240, dur: 10, text: "Pour to {w} g the same way."},
+      {s: 120, w: 300, dur: 10, text: "Last pour to {w} g."},
+      {s: 330, end: true, text: "Let it draw down fully (about 3:30 after the last pour), then swirl and smell the aroma."}
+    ],
+    tips: ["Start each pour when the bed is nearly dry; the times shown are a guide.", "Bitter or dry: grind coarser. Sour or thin: grind finer.", "Pouring from a little higher than usual stirs the bed with the water itself."],
+    source: "https://honestcoffeeguide.com/brew-recipes/matt-winton-v60-five-pour/"
+  },
+  {
+    id: "hario-official", temp: "hot", name: "Official V60 Recipe", by: "Hario",
+    use: ["beginner", "medium", "light", "onecup"],
+    dose: 15, water: 225, ice: 0, tempC: 94, grind: 600, total: 180, time: "~3:00",
+    blurb: "The maker's own starting point: a short bloom and two pours. Simple, clean and bright.",
+    tags: ["Simple", "Clean", "1 cup"],
+    prep: ["Rinse the paper and discard the water.", "Grind medium-fine, about like table salt."],
+    steps: [
+      {s: 0, w: 30, dur: 8, text: "Bloom: pour {w} g to wet all the coffee. Wait 30 seconds."},
+      {s: 30, w: 150, dur: 40, text: "Pour in slow circles from the centre outward, to {w} g."},
+      {s: 75, w: 225, dur: 25, text: "Pour to {w} g, keeping the bed level."},
+      {s: 180, end: true, text: "Let it draw down fully, around 3:00."}
+    ],
+    tips: ["Hario gives 92 to 96 °C: hotter for light roasts, cooler for darker ones.", "A great first recipe: few steps, easy to repeat."],
+    source: "https://field-guides.vercel.app/pour-over/hario-v60-official-recipe.html"
+  },
+  {
+    id: "kurasu-light", temp: "hot", name: "Light Roast V60", by: "Kurasu Kyoto",
+    use: ["light", "fruity", "floral", "onecup", "quick"],
+    dose: 12, water: 200, ice: 0, tempC: 90, grind: 900, total: 135, time: "2:00–2:30",
+    blurb: "A small, gentle cup for light roasts: coarse grind and cooler water keep it sweet and delicate.",
+    tags: ["Delicate", "Sweet", "Small cup"],
+    prep: ["Rinse the paper and discard the water.", "Coarse grind. Kurasu suggests about 32 clicks on a Comandante C40."],
+    steps: [
+      {s: 0, w: 40, dur: 10, text: "Pour {w} g."},
+      {s: 40, w: 100, dur: 12, text: "Pour to {w} g."},
+      {s: 70, w: 150, dur: 10, text: "When the bed is ready, pour to {w} g."},
+      {s: 100, w: 200, dur: 10, text: "Pour to {w} g."},
+      {s: 135, end: true, text: "Remove the dripper when the drip slows to single drops, around 2:00 to 2:30."}
+    ],
+    tips: ["Written for Kurasu's light roasts.", "Start the 3rd and 4th pours when the bed is ready, not strictly by the clock."],
+    source: "https://kurasu.kyoto/blogs/kurasu-journal/basic-recipe-for-brewing-kurasu-light-roast-coffee-with-the-hario-v60"
+  },
+  {
+    id: "april-6pour", temp: "hot", name: "Six-Pour V60", by: "April Coffee · Patrik Rolf",
+    use: ["medium", "body", "choc"],
+    dose: 20, water: 300, ice: 0, tempC: 92, grind: 800, total: 205, time: "3:20–3:30",
+    blurb: "Six fast, agitating 50 g pours for a higher extraction than most pour-overs. Balanced and clear.",
+    tags: ["Balanced", "High extraction", "6 pours"],
+    prep: ["Rinse the paper and discard the water.", "Medium-coarse grind; written for medium roasts."],
+    steps: [
+      {s: 0, w: 50, dur: 8, text: "Bloom: pour {w} g fast, in circles, to stir up the grounds. Don't stir with a spoon."},
+      {s: 25, w: 100, dur: 8, text: "When the bed runs dry, pour to {w} g, fast and in circles."},
+      {s: 55, w: 150, dur: 8, text: "Pour to {w} g the same way."},
+      {s: 85, w: 200, dur: 8, text: "Pour to {w} g the same way."},
+      {s: 115, w: 250, dur: 8, text: "Pour to {w} g the same way."},
+      {s: 145, w: 300, dur: 8, text: "Last pour to {w} g."},
+      {s: 205, end: true, text: "Drawdown done around 3:20 to 3:30."}
+    ],
+    tips: ["Each pour starts when the bed runs dry, so the times are approximate.", "The aggressive pours do the stirring for you."],
+    source: "https://honestcoffeeguide.com/brew-recipes/april-coffee-roasters/"
+  },
+  {
+    id: "lacabra", temp: "hot", name: "Everyday V60", by: "La Cabra",
+    use: ["light", "washed", "beginner", "onecup", "fruity"],
+    dose: 15, water: 250, ice: 0, tempC: 96, grind: 600, total: 180, time: "~3:00",
+    blurb: "Three pours, 45 seconds apart. The Danish roaster says it suits every coffee they roast.",
+    tags: ["Simple", "Clean", "Nordic"],
+    prep: ["Rinse the paper with hot water and discard it.", "Soft water works best; La Cabra suggests 30 to 50 ppm."],
+    steps: [
+      {s: 0, w: 60, dur: 10, text: "Pour {w} g to wet all the coffee."},
+      {s: 45, w: 155, dur: 20, text: "Pour to {w} g."},
+      {s: 90, w: 250, dur: 20, text: "Pour to {w} g."},
+      {s: 180, end: true, text: "Drawdown done around 3:00."}
+    ],
+    tips: ["La Cabra roasts light, so this recipe shines with bright, fruity coffees.", "Their starting ratio is about 65 g of coffee per litre."],
+    source: "https://us.lacabra.com/pages/v60-brew-guide"
+  },
+  {
+    id: "lamill", temp: "hot", name: "12 oz V60", by: "LAMILL Coffee",
+    use: ["dark", "medium", "choc", "sharing", "body"],
+    dose: 23, water: 375, ice: 0, tempC: 94, grind: 750, total: 180, time: "~3:00",
+    blurb: "A big mug in four pours, with clear guidance for dark roasts: cooler water and a coarser grind.",
+    tags: ["Big mug", "Dark-roast friendly", "Rich"],
+    prep: ["Rinse the paper and discard the water.", "Medium grind, like coarse sand. For dark roasts, go coarser and use 87 to 90 °C water."],
+    steps: [
+      {s: 0, w: 50, dur: 10, text: "Bloom: pour {w} g to wet all the coffee evenly."},
+      {s: 35, w: 155, dur: 25, text: "Slow circular pour to {w} g."},
+      {s: 75, w: 265, dur: 25, text: "Pour to {w} g."},
+      {s: 115, w: 375, dur: 25, text: "Pour to {w} g."},
+      {s: 180, end: true, text: "Drawdown done, around 3:00."}
+    ],
+    tips: ["Dark roast: drop to 87 to 90 °C and grind coarser to avoid bitterness.", "Makes a 12 oz mug, or two small cups."],
+    source: "https://cdn.shopify.com/s/files/1/1507/4926/files/LAMILL_Brew_Guide_-_Hario_V60.pdf"
+  },
+
   /* ---------------- ICED ---------------- */
   {
     id: "hoffmann-iced", temp: "iced", name: "Japanese Iced V60", by: "James Hoffmann",
+    use: ["fruity", "light", "washed", "sharing"],
     dose: 30, water: 300, ice: 200, tempC: 96, grind: 525, total: 150, time: "~2:30",
     blurb: "Brew a strong coffee straight onto ice: 60% hot water, 40% ice. Crisp and aromatic.",
     tags: ["Crisp", "Fruity", "1:16.7"],
@@ -109,6 +219,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "kasuya-iced", temp: "iced", name: "Hot Bloom, Then Ice", by: "Tetsu Kasuya",
+    use: ["body", "choc", "natural", "medium"],
     dose: 20, water: 100, ice: 100, tempC: 92, grind: 525, total: 180, time: "~3:00",
     blurb: "Equal parts hot water and ice in two pours. Rich, sweet and syrupy.",
     tags: ["Rich", "Sweet", "1:10"],
@@ -123,6 +234,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "flash-brew", temp: "iced", name: "Classic Flash Brew", by: "Traditional Japanese method",
+    use: ["beginner", "medium", "light", "fruity"],
     dose: 20, water: 180, ice: 120, tempC: 95, grind: 550, total: 165, time: "2:30–3:00",
     blurb: "The standard Japanese iced method: three pours onto ice, 1:15 overall.",
     tags: ["Balanced", "Easy", "1:15"],
@@ -138,6 +250,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "nosleep-iced", temp: "iced", name: "Quick Iced V60", by: "No Sleep Roastery",
+    use: ["quick", "onecup", "beginner"],
     dose: 15, water: 150, ice: 75, tempC: 96, grind: 600, total: 150, time: "~2:30",
     blurb: "One small glass in under three minutes: quick centre pours, then a slow finish.",
     tags: ["Quick", "1 glass", "1:15"],
@@ -153,6 +266,7 @@ window.BREW_LIBRARY = [
   },
   {
     id: "kurasu-switch", temp: "iced", name: "Iced V60 Switch", by: "Kurasu Kyoto", gear: "Needs a Hario V60 Switch",
+    use: ["body", "natural", "medium"],
     dose: 15, water: 140, ice: 150, tempC: 95, grind: 750, total: 120, time: "1:45–2:00",
     blurb: "Steep first, then release onto the server and chill with ice. Very sweet and full-bodied.",
     tags: ["Full body", "Immersion", "V60 Switch"],
@@ -164,12 +278,156 @@ window.BREW_LIBRARY = [
     ],
     tips: ["Steeping before draining gives a sweeter, rounder cup than a straight pour-through.", "On a regular V60, use one of the other iced recipes instead."],
     source: "https://kurasu.kyoto/blogs/recipe/new-hario-v60-switch-iced-coffee-recipe"
+  },
+  {
+    id: "partners-flash", temp: "iced", name: "Flash Brew", by: "Partners Coffee",
+    use: ["beginner", "medium", "choc"],
+    dose: 20, water: 200, ice: 100, tempC: 96, grind: 550, total: 180, time: "2:40–3:20",
+    blurb: "A stirred bloom and two pours straight onto ice. Clean, balanced and easy.",
+    tags: ["Balanced", "Easy", "1:15"],
+    prep: ["Fill the carafe with {ice} g of ice.", "Grind medium-fine."],
+    steps: [
+      {s: 0, w: 60, dur: 10, text: "Bloom: pour {w} g, stir, and let it steep 40 seconds."},
+      {s: 40, w: 120, dur: 20, text: "Pour to {w} g."},
+      {s: 80, w: 200, dur: 25, text: "Pour to {w} g."},
+      {s: 180, end: true, text: "Drawdown onto the ice by 2:40 to 3:20. Swirl and serve."}
+    ],
+    tips: ["The ratio counts the ice too, so the drink ends at a normal coffee strength."],
+    source: "https://help.partnerscoffee.com/en-US/flash-brew-recipe-413883"
+  },
+  {
+    id: "or-iced", temp: "iced", name: "Iced V60", by: "OR Coffee Roasters",
+    use: ["natural", "fruity", "quick"],
+    dose: 22, water: 225, ice: 75, tempC: 92, grind: 575, total: 140, time: "~2:20",
+    blurb: "Three equal pours onto a little ice. Written for a natural coffee that shines cold.",
+    tags: ["Fruity", "Quick", "3 equal pours"],
+    prep: ["Rinse the paper first, then put {ice} g of ice in the carafe.", "Grind medium-fine, the same as a regular V60."],
+    steps: [
+      {s: 0, w: 75, dur: 10, text: "Bloom: pour {w} g and let it settle."},
+      {s: 45, w: 150, dur: 20, text: "Pour to {w} g in a steady circular motion."},
+      {s: 90, w: 225, dur: 20, text: "Final pour to {w} g."},
+      {s: 140, end: true, text: "Done around 2:20. Swirl the carafe to melt the ice, then pour over fresh ice."}
+    ],
+    tips: ["Lovely with fruity naturals.", "Optional: add a thin slice of lemon."],
+    source: "https://www.orcoffee.be/blogs/blog/chill-out-why-the-iced-v60-is-your-summer-essential"
   }
+
 ];
 
 /* ---------------- Arabic text for the library (same order of steps as above) ---------------- */
 (function () {
   const AR = {
+    "winton-5pour": {
+      name: "V60 بخمس صبّات", by: "مات وينتون · بطل العالم في التحضير اليدوي 2021",
+      blurb: "خمس صبّات متساوية، كل منها من ارتفاع بسيط. مصممة للنقاء والحلاوة والتوازن.",
+      tags: ["نقاء", "حلو", "5 صبّات متساوية"],
+      prep: ["اشطف الورق وتخلّص من الماء.", "طحنة متوسطة؛ الوصفة مصممة للتحميص الفاتح.", "في البطولة استخدم 93 °م للتشريب وحوالي 88 °م بعدها. ارفع الغلاية عن قاعدتها بين الصبّات لتبرد قليلاً."],
+      steps: [
+        "التشريب: صب {w} غ بشكل دائري ومن ارتفاع بسيط حتى يتبلل كل البن.",
+        "صب حتى {w} غ: ابدأ من المنتصف، ثم حلزونياً للخارج، ثم ارجع للمنتصف.",
+        "صب حتى {w} غ بنفس الطريقة.",
+        "صب حتى {w} غ بنفس الطريقة.",
+        "الصبّة الأخيرة حتى {w} غ.",
+        "اتركه يصفّي بالكامل (حوالي 3:30 بعد آخر صبّة)، ثم حرّك بشكل دائري واستمتع بالرائحة."
+      ],
+      tips: ["ابدأ كل صبّة عندما يكاد سطح البن يجف؛ الأوقات المعروضة للإرشاد.", "إذا كان مراً أو قابضاً: طحنة أخشن. إذا كان حامضاً أو خفيفاً: طحنة أنعم.", "الصب من ارتفاع أعلى قليلاً من المعتاد يحرّك البن بالماء نفسه."]
+    },
+    "hario-official": {
+      name: "وصفة V60 الرسمية", by: "هاريو",
+      blurb: "نقطة البداية من الشركة المصنّعة نفسها: تشريب قصير وصبّتان. بسيطة ونظيفة ومشرقة.",
+      tags: ["بسيطة", "نظيفة", "كوب واحد"],
+      prep: ["اشطف الورق وتخلّص من الماء.", "طحنة متوسطة إلى ناعمة، تقريباً مثل ملح الطعام."],
+      steps: [
+        "التشريب: صب {w} غ ليتبلل كل البن. انتظر 30 ثانية.",
+        "صب بدوائر بطيئة من المنتصف للخارج حتى {w} غ.",
+        "صب حتى {w} غ مع إبقاء سطح البن مستوياً.",
+        "اتركه يصفّي بالكامل، عند حوالي 3:00."
+      ],
+      tips: ["هاريو تعطي 92 إلى 96 °م: أسخن للتحميص الفاتح، وأبرد للأغمق.", "وصفة أولى ممتازة: خطوات قليلة وسهلة التكرار."]
+    },
+    "kurasu-light": {
+      name: "V60 للتحميص الفاتح", by: "كوراسو كيوتو",
+      blurb: "كوب صغير ولطيف للتحميص الفاتح: طحنة خشنة وماء أبرد يحافظان على الحلاوة والرقة.",
+      tags: ["رقيق", "حلو", "كوب صغير"],
+      prep: ["اشطف الورق وتخلّص من الماء.", "طحنة خشنة. كوراسو تقترح حوالي 32 نقرة على مطحنة Comandante C40."],
+      steps: [
+        "صب {w} غ.",
+        "صب حتى {w} غ.",
+        "عندما يجهز سطح البن، صب حتى {w} غ.",
+        "صب حتى {w} غ.",
+        "ارفع الأداة عندما يصبح التقطير نقطة نقطة، عند حوالي 2:00 إلى 2:30."
+      ],
+      tips: ["مكتوبة لقهوة كوراسو ذات التحميص الفاتح.", "ابدأ الصبّة الثالثة والرابعة عندما يجهز سطح البن، وليس بالساعة حرفياً."]
+    },
+    "april-6pour": {
+      name: "V60 بست صبّات", by: "April Coffee · باتريك رولف",
+      blurb: "ست صبّات سريعة ومحرّكة كل منها 50 غ لاستخلاص أعلى من أغلب وصفات التقطير. متوازنة وواضحة.",
+      tags: ["متوازن", "استخلاص عالٍ", "6 صبّات"],
+      prep: ["اشطف الورق وتخلّص من الماء.", "طحنة متوسطة إلى خشنة؛ مكتوبة للتحميص المتوسط."],
+      steps: [
+        "التشريب: صب {w} غ بسرعة وبشكل دائري ليتحرك البن. لا تقلّب بالملعقة.",
+        "عندما يجف سطح البن، صب حتى {w} غ بسرعة وبشكل دائري.",
+        "صب حتى {w} غ بنفس الطريقة.",
+        "صب حتى {w} غ بنفس الطريقة.",
+        "صب حتى {w} غ بنفس الطريقة.",
+        "الصبّة الأخيرة حتى {w} غ.",
+        "تنتهي التصفية عند حوالي 3:20 إلى 3:30."
+      ],
+      tips: ["كل صبّة تبدأ عندما يجف سطح البن، لذا الأوقات تقريبية.", "الصب القوي يقوم بالتقليب بدلاً عنك."]
+    },
+    "lacabra": {
+      name: "V60 اليومي", by: "لا كابرا",
+      blurb: "ثلاث صبّات بين كل منها 45 ثانية. المحمصة الدنماركية تقول إنها تناسب كل أنواع قهوتها.",
+      tags: ["بسيطة", "نظيفة", "نوردك"],
+      prep: ["اشطف الورق بماء حار وتخلّص منه.", "الماء الخفيف أفضل؛ لا كابرا تقترح 30 إلى 50 جزءاً في المليون."],
+      steps: [
+        "صب {w} غ ليتبلل كل البن.",
+        "صب حتى {w} غ.",
+        "صب حتى {w} غ.",
+        "تنتهي التصفية عند حوالي 3:00."
+      ],
+      tips: ["لا كابرا تحمّص تحميصاً فاتحاً، لذا تتألق هذه الوصفة مع القهوة المشرقة والفواكهية.", "نسبتهم المبدئية حوالي 65 غ بن لكل لتر."]
+    },
+    "lamill": {
+      name: "V60 لكوب كبير", by: "LAMILL Coffee",
+      blurb: "كوب كبير بأربع صبّات، مع إرشاد واضح للتحميص الغامق: ماء أبرد وطحنة أخشن.",
+      tags: ["كوب كبير", "مناسب للتحميص الغامق", "غني"],
+      prep: ["اشطف الورق وتخلّص من الماء.", "طحنة متوسطة مثل الرمل الخشن. للتحميص الغامق اجعلها أخشن واستخدم ماء 87 إلى 90 °م."],
+      steps: [
+        "التشريب: صب {w} غ ليتبلل كل البن بالتساوي.",
+        "صب ببطء بشكل دائري حتى {w} غ.",
+        "صب حتى {w} غ.",
+        "صب حتى {w} غ.",
+        "تنتهي التصفية عند حوالي 3:00."
+      ],
+      tips: ["للتحميص الغامق: انزل إلى 87 إلى 90 °م واجعل الطحنة أخشن لتجنّب المرارة.", "تكفي كوباً كبيراً (12 أونصة) أو كوبين صغيرين."]
+    },
+    "partners-flash": {
+      name: "فلاش برو", by: "Partners Coffee",
+      blurb: "تشريب مع تقليب وصبّتان مباشرة على الثلج. نظيفة ومتوازنة وسهلة.",
+      tags: ["متوازن", "سهل", "1:15"],
+      prep: ["املأ الإبريق بـ {ice} غ ثلج.", "طحنة متوسطة إلى ناعمة."],
+      steps: [
+        "التشريب: صب {w} غ، قلّب، واتركه 40 ثانية.",
+        "صب حتى {w} غ.",
+        "صب حتى {w} غ.",
+        "تنتهي التصفية على الثلج بين 2:40 و3:20. حرّك وقدّم."
+      ],
+      tips: ["النسبة تحسب الثلج أيضاً، فتصل القهوة لقوة الشرب المعتادة."]
+    },
+    "or-iced": {
+      name: "V60 بارد", by: "OR Coffee Roasters",
+      blurb: "ثلاث صبّات متساوية على قليل من الثلج. مكتوبة لقهوة مجففة تتألق باردة.",
+      tags: ["فواكهي", "سريع", "3 صبّات متساوية"],
+      prep: ["اشطف الورق أولاً، ثم ضع {ice} غ ثلج في الإبريق.", "طحنة متوسطة إلى ناعمة، مثل الـ V60 العادي."],
+      steps: [
+        "التشريب: صب {w} غ واتركه يستقر.",
+        "صب حتى {w} غ بحركة دائرية ثابتة.",
+        "الصبّة الأخيرة حتى {w} غ.",
+        "تنتهي عند حوالي 2:20. حرّك الإبريق ليذوب الثلج، ثم اسكبها على ثلج جديد."
+      ],
+      tips: ["رائعة مع القهوة المجففة الفواكهية.", "اختياري: أضف شريحة رقيقة من الليمون."]
+    },
     "hoffmann-ultimate": {
       name: "الـ V60 المثالي", by: "جيمس هوفمان",
       blurb: "تشريب كبير وصبّتان رئيسيتان ثم تقليب وتحريك دائري. كوب نظيف ومشرق وحلو؛ ممتاز للتحميص الفاتح.",
@@ -306,3 +564,20 @@ window.BREW_LIBRARY = [
   };
   (window.BREW_LIBRARY || []).forEach(r => { if (AR[r.id]) r.ar = AR[r.id]; });
 })();
+
+/* "Best for" keywords. Each recipe lists the ones that fit it in its `use` array. */
+window.BREW_KEYWORDS = [
+  {id: "fruity", en: "Fruity beans", ar: "بن فواكهي"},
+  {id: "floral", en: "Floral", ar: "زهري"},
+  {id: "choc", en: "Chocolatey & nutty", ar: "شوكولاتة ومكسرات"},
+  {id: "light", en: "Light roast", ar: "تحميص فاتح"},
+  {id: "medium", en: "Medium roast", ar: "تحميص متوسط"},
+  {id: "dark", en: "Dark roast", ar: "تحميص غامق"},
+  {id: "natural", en: "Natural process", ar: "معالجة مجففة"},
+  {id: "washed", en: "Washed & clean", ar: "مغسولة ونظيفة"},
+  {id: "body", en: "Full body", ar: "قوام ممتلئ"},
+  {id: "beginner", en: "Beginner-friendly", ar: "سهلة للمبتدئين"},
+  {id: "quick", en: "Quick", ar: "سريعة"},
+  {id: "onecup", en: "One cup", ar: "كوب واحد"},
+  {id: "sharing", en: "Two cups or more", ar: "كوبان أو أكثر"}
+];
