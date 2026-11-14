@@ -114,6 +114,24 @@ button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
 @media (max-width:600px){#libFilters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 #libFilters::-webkit-scrollbar{display:none}#libFilters .kw{flex:none}}
 .hint{font-size:12px;color:var(--muted)}
+/* bottom bar: live recipe summary while editing on phones, brewing controls while the timer runs */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px));pointer-events:none}
+.dock-in{max-width:720px;margin:0 auto 10px;pointer-events:auto;background:var(--lcd);color:var(--lcd-ink);border-radius:16px;box-shadow:0 8px 24px rgb(0 0 0 / .22)}
+.dock-sum{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;cursor:pointer;border-radius:16px}
+.dock-sum:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dock-txt{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.dock-txt b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dock-stats{font-family:var(--f-mono);font-size:13px;color:var(--lcd-ink);opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;unicode-bidi:isolate;text-align:start}
+:root[dir="rtl"] .dock-stats{text-align:right}
+.dock-go{font-size:13px;font-weight:600;color:var(--lcd-ink);border:1px solid color-mix(in srgb,var(--lcd-ink) 40%,transparent);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.dock-brew{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px}
+.dock-clock{font-family:var(--f-mono);font-size:28px;font-weight:500;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;flex:none}
+.dock-now{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:13.5px;line-height:1.35}
+.dock-now b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dock-now small{color:var(--lcd-dim);font-size:12.5px}
+.dock-brew .primary{flex:none;min-width:76px}
+body.has-dock{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+@media (prefers-reduced-motion:no-preference){.dock-in{animation:dockin .2s ease-out}@keyframes dockin{from{transform:translateY(12px);opacity:0}}}
 .hbtns{display:flex;gap:8px;flex-wrap:wrap}
 /* numbers, times and ratios stay left-to-right inside Arabic text */
 .lcd .v,ol.steps .t,ol.steps .w,.lc-time,.clock{direction:ltr;unicode-bidi:isolate}
@@ -414,6 +432,20 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </div>
 
 <footer data-i18n>Brewprint v8 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+</div>
+
+<div class="dock" id="dock" hidden>
+  <div class="dock-in">
+    <button type="button" class="dock-sum" id="dockSum">
+      <span class="dock-txt"><b id="dockTitle"></b><span class="dock-stats" id="dockStats"></span></span>
+      <span class="dock-go" data-i18n>View recipe</span>
+    </button>
+    <div class="dock-brew" id="dockBrew" hidden>
+      <span class="dock-clock" id="dockClock">0:00</span>
+      <span class="dock-now" id="dockNow"></span>
+      <button class="primary" type="button" id="dockStop" data-i18n>Stop</button>
+    </div>
+  </div>
 </div>
 
 <dialog id="beansDlg">
@@ -826,6 +858,7 @@ function render(){
   $("applied").hidden = !state.adj.log.length;
   $("appliedText").textContent = state.adj.log.length ? T("Adjusted: {list}", {list:state.adj.log.map(x => T(x)).join(T(", "))}) : "";
   current = r; resetTimer(); $("notes").textContent = "";
+  updateDockSummary(r);
   renderBeanChips();
   try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder,
     brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter, libView:state.libView, beanId:currentBeanId})); } catch(e){}
@@ -913,6 +946,7 @@ function resetTimer(){
   $("next").textContent = T("Start when your first pour begins.");
   document.querySelectorAll("#steps li").forEach(li => li.classList.remove("now","done"));
   try { wake?.release(); } catch(e){} wake = null;
+  brewing = false; updateDock();
 }
 function tick(){
   const el = (performance.now() - tStart)/1000; $("clock").textContent = fmt(el);
@@ -922,13 +956,43 @@ function tick(){
   const nx = steps[idx+1];
   if (nx) $("next").innerHTML = `${esc(T("Now:"))} <b>${esc(steps[idx].a)}</b><br>${esc(T("Next in {t}", {t:fmt(nx.s - el)}))}${nx.w ? " · " + esc(T("to {w}", {w:nx.w})) : ""}`;
   else { $("next").innerHTML = `<b>${esc(T("Enjoy your cup."))}</b>`; clearInterval(tId); tId = 0; $("tStart").textContent = T("Start again"); }
+  $("dockClock").textContent = fmt(el);
+  $("dockNow").innerHTML = nx
+    ? `<b>${esc(steps[idx].a)}</b><small>${esc(T("Next in {t}", {t:fmt(nx.s - el)}))}${nx.w ? " · " + esc(T("to {w}", {w:nx.w})) : ""}</small>`
+    : `<b>${esc(T("Enjoy your cup."))}</b>`;
+  $("dockStop").textContent = T(nx ? "Stop" : "Done");
 }
 $("tStart").onclick = async () => {
   if (tId){ resetTimer(); return; }
-  resetTimer(); tStart = performance.now(); tId = setInterval(tick, 250); tick(); $("tStart").textContent = T("Stop");
+  resetTimer(); tStart = performance.now(); brewing = true; updateDock(); tId = setInterval(tick, 250); tick(); $("tStart").textContent = T("Stop");
   try { wake = await navigator.wakeLock?.request("screen"); } catch(e){}
 };
 $("tReset").onclick = resetTimer;
+$("dockStop").onclick = resetTimer;
+
+/* ---------- bottom bar ---------- */
+let brewing = false, cardOnScreen = true;
+const phone = matchMedia("(max-width: 959px)");
+function updateDock(){
+  const showSum = !brewing && phone.matches && !cardOnScreen && !!current;
+  const show = brewing || showSum;
+  $("dock").hidden = !show; document.body.classList.toggle("has-dock", show);
+  $("dockBrew").hidden = !brewing; $("dockSum").hidden = brewing;
+}
+function updateDockSummary(r){
+  const g = GRINDERS[state.grinder];
+  $("dockTitle").textContent = $("rTitle").textContent;
+  $("dockStats").textContent = [
+    r.dose + G(), r.water + G() + (r.ice ? " + " + r.ice + G() + " " + T("ice") : ""),
+    r.temp == null ? T("cold") : r.temp + "°",
+    g ? g.f(r.grind).replace(T(" from zero"), "") : r.grind + T("µm"), r.timeLabel
+  ].join(" · ");
+}
+$("dockSum").onclick = () => document.querySelector(".card").scrollIntoView({behavior: smooth(), block: "start"});
+if ("IntersectionObserver" in window){
+  new IntersectionObserver(es => { cardOnScreen = es[0].isIntersecting; updateDock(); }, {threshold: 0.05}).observe(document.querySelector(".card"));
+}
+phone.addEventListener?.("change", updateDock);
 
 /* ---------- saved recipes ---------- */
 const loadSaved = () => { try { return JSON.parse(localStorage.getItem("brewprint.saved")||"[]"); } catch(e){ return []; } };

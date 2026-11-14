@@ -118,6 +118,9 @@ window.I18N_AR = {
   "Saving a coffee with the same name and roaster updates it instead of adding a copy. A scanned bag keeps a small photo.": "حفظ قهوة بنفس الاسم والمحمصة يحدّثها بدل إضافة نسخة. والكيس المصوّر يُحفظ معه صورة صغيرة.",
   "Saved beans and recipes stay on this phone only; deleting the app or clearing browser data removes them.": "البن والوصفات المحفوظة تبقى على هذا الجوال فقط؛ حذف التطبيق أو مسح بيانات المتصفح يحذفها.",
 
+  /* bottom bar */
+  "View recipe": "عرض الوصفة", " from zero": " من الصفر", "ice": "ثلج", "Done": "تم",
+
   /* recipe card */
   "Recipe": "الوصفة",
   "Pour curve": "منحنى الصب", "Before you start": "قبل أن تبدأ", "Steps": "الخطوات",
