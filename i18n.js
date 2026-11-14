@@ -49,6 +49,20 @@ window.I18N_AR = {
   "{n} recipes. Tap one to see its steps.": "عدد الوصفات: {n}. اضغط على وصفة لرؤية خطواتها.",
   "{n} recipes best for “{k}”. Tap one to see its steps.": "الوصفات المناسبة لـ «{k}»: {n}. اضغط على وصفة لرؤية خطواتها.",
 
+  /* match my beans */
+  "Match my beans": "طابق مع البن الخاص بي",
+  "Suggests a recipe for your coffee": "يقترح وصفة تناسب قهوتك",
+  "Browse all": "تصفّح الكل",
+  "Filter by what each recipe suits": "صفِّ حسب ما تناسبه كل وصفة",
+  "How to pick a recipe": "طريقة اختيار الوصفة",
+  "Your best matches": "أنسب الوصفات لك",
+  "<b>Your beans:</b> {list}. <b>You like:</b> {t}.": "<b>البن الخاص بك:</b> {list}. <b>ذوقك:</b> {t}.",
+  "fruity notes": "إيحاءات فواكه", "floral notes": "إيحاءات زهرية", "chocolatey notes": "إيحاءات شوكولاتة",
+  "Best match": "الأنسب", "Also a good fit": "مناسبة أيضاً",
+  "Why:": "السبب:", "a good all-rounder": "وصفة متوازنة تناسب أغلب أنواع البن",
+  "See all {n} recipes": "شاهد كل الوصفات ({n})",
+  "Why it suits your beans: {list}.": "لماذا تناسب البن الخاص بك: {list}.",
+
   /* recipe card */
   "Recipe": "الوصفة",
   "Pour curve": "منحنى الصب", "Before you start": "قبل أن تبدأ", "Steps": "الخطوات",
@@ -72,8 +86,8 @@ window.I18N_AR = {
   "Close": "إغلاق", "Open": "فتح", "Delete": "حذف",
   "No saved recipes yet. Build one and tap “Save recipe”.": "لا توجد وصفات محفوظة بعد. جهّز وصفة واضغط «احفظ الوصفة».",
   "Famous recipe": "وصفة مشهورة", "Untitled coffee": "قهوة بدون اسم",
-  "Brewprint v5 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
-    "Brewprint الإصدار 5 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
+  "Brewprint v6 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
+    "Brewprint الإصدار 6 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
 
   /* card labels */
   "Famous recipe · Hot V60": "وصفة مشهورة · V60 حار", "Famous recipe · Iced V60": "وصفة مشهورة · V60 بارد",

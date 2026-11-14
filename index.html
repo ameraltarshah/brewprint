@@ -77,6 +77,18 @@ button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
 .lc-use .kw{font-size:11.5px;padding:2px 9px;background:var(--bg)}
 .lc-use .kw.on{border-color:var(--accent);color:var(--accent);font-weight:600}
 .usefor{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px}
+.viewswitch{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.viewswitch button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:1px;min-width:0}
+.viewswitch button b{font-size:14.5px}
+.viewswitch button span{font-size:12px;color:var(--muted)}
+.viewswitch button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.viewswitch button[aria-pressed="true"] span{color:color-mix(in srgb,var(--bg) 75%,transparent)}
+.matchsum{margin:0;font-size:14px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 14px}
+.matchsum b{color:var(--ink)}
+.badge{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;align-self:flex-start;background:var(--amber-soft);color:var(--amber)}
+.badge.top{background:var(--accent);color:var(--accent-ink)}
+.lc-why{font-size:13px;color:var(--ink)}
+.lc-why b{color:var(--accent)}
 @media (max-width:600px){#libFilters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 #libFilters::-webkit-scrollbar{display:none}#libFilters .kw{flex:none}}
 .hint{font-size:12px;color:var(--muted)}
@@ -92,6 +104,7 @@ button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
 :root[lang="ar"] .lcd .k{font-size:12px}
 .lcd .s{unicode-bidi:plaintext}
 :root[lang="ar"] .lcd .s{font-family:var(--f-body);font-size:12.5px}
+:root[lang="ar"] .libcard .lc-stats{font-family:var(--f-body);font-size:13px}
 .source{font-size:13px;color:var(--accent);font-weight:600;text-underline-offset:3px}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
@@ -246,12 +259,18 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       <button type="button" data-v="hot" aria-pressed="true" data-i18n>Hot</button>
       <button type="button" data-v="iced" aria-pressed="false" data-i18n>Iced</button>
     </div>
-    <div class="kwbar">
-      <span class="label" data-i18n>Best for</span>
-      <div class="kwchips" id="libFilters" role="group" aria-label="Filter recipes by what they're best for" data-i18n-aria></div>
-      <div class="hint" id="libCount" role="status"></div>
+    <div class="viewswitch" role="group" aria-label="How to pick a recipe" data-i18n-aria id="libView">
+      <button type="button" data-v="match" aria-pressed="false"><b data-i18n>Match my beans</b><span data-i18n>Suggests a recipe for your coffee</span></button>
+      <button type="button" data-v="browse" aria-pressed="true"><b data-i18n>Browse all</b><span data-i18n>Filter by what each recipe suits</span></button>
     </div>
-    <div class="libcards" id="libList" role="list"></div>
+    <div id="browseBox" class="block">
+      <div class="kwbar">
+        <span class="label" data-i18n>Best for</span>
+        <div class="kwchips" id="libFilters" role="group" aria-label="Filter recipes by what they're best for" data-i18n-aria></div>
+        <div class="hint" id="libCount" role="status"></div>
+      </div>
+      <div class="libcards" id="libList" role="list"></div>
+    </div>
   </section>
 
   <section class="block" id="beansBlock">
@@ -281,6 +300,22 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       <div class="field wide"><label for="bNotes" data-i18n>Tasting notes on the bag</label><input id="bNotes" dir="auto" placeholder="e.g. blueberry, jasmine, cocoa" data-i18n-ph></div>
     </div>
     <datalist id="origins"><option>Ethiopia</option><option>Kenya</option><option>Colombia</option><option>Brazil</option><option>Yemen</option><option>Panama</option><option>Costa Rica</option><option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Rwanda</option><option>Burundi</option><option>Peru</option><option>Bolivia</option><option>Indonesia</option><option>Mexico</option><option>Nicaragua</option><option>Uganda</option><option>Tanzania</option><option>India</option><option>Ecuador</option><option>China</option></datalist>
+  </section>
+
+  <section class="block" id="matchBlock" hidden>
+    <div class="block-head"><span class="n">3</span><h2 data-i18n>Your best matches</h2></div>
+    <div class="field"><span class="label" data-i18n>Taste you like</span>
+      <div class="seg" id="matchTaste" role="group" aria-label="Taste" data-i18n-aria>
+        <button type="button" class="chip" data-v="classic" data-i18n>Classic</button>
+        <button type="button" class="chip" data-v="fruity" data-i18n>Fruity</button>
+        <button type="button" class="chip" data-v="sweet" data-i18n>Sweet</button>
+        <button type="button" class="chip" data-v="choc" data-i18n>Chocolatey</button>
+        <button type="button" class="chip" data-v="floral" data-i18n>Floral</button>
+        <button type="button" class="chip" data-v="bold" data-i18n>Bold</button>
+      </div></div>
+    <p class="matchsum" id="matchSummary"></p>
+    <div class="libcards" id="matchList" role="list"></div>
+    <button class="link" type="button" id="seeAll"></button>
   </section>
 
   <section class="block" id="cupBlock">
@@ -351,7 +386,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer data-i18n>Brewprint v5 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer data-i18n>Brewprint v6 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
 
 <dialog id="savedDlg">
@@ -428,7 +463,7 @@ const EXAMPLES = {
 };
 const isExampleName = n => n === EXAMPLES.en.name || n === EXAMPLES.ar.name;
 const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true,
-  brewMode:"library", libId:"hoffmann-ultimate", libDose:30, libFilter:""};
+  brewMode:"library", libId:"hoffmann-ultimate", libDose:30, libFilter:"", libView:"browse", matchTop:""};
 
 /* ---------- recipe library (library.js) ---------- */
 const LIB = window.BREW_LIBRARY || [];
@@ -478,10 +513,64 @@ function renderLibList(){
     ${x.gear ? `<span class="lc-gear">${esc(L(x, "gear"))}</span>` : ""}
     <span class="lc-use">${(x.use || []).map(u => `<span class="kw${u === state.libFilter ? " on" : ""}">${esc(kwName(u))}</span>`).join("")}</span></button>`).join("");
 }
+/* ---------- match my beans: score each famous recipe against the bean details and taste ---------- */
+const NOTE_RX = {
+  fruity: /berr|fruit|cherr|grape|apple|peach|apricot|plum|mango|pineapple|passion|papaya|guava|lychee|kiwi|melon|pomegranate|\bfigs?\b|\bdates?\b|raisin|citrus|lemon|lime|orange|bergamot|tangerine|mandarin|grapefruit|tropical|juicy|wine|توت|فراول|كرز|عنب|تفاح|خوخ|دراق|مشمش|برقوق|مانج|أناناس|اناناس|فواكه|فاكهة|رمان|تين|تمر|زبيب|ليمون|برتقال|يوسفي|حمض|برغموت|بطيخ|شمام|جوافة|ليتشي|استوائ/i,
+  floral: /floral|flower|jasmine|rose|lavender|hibiscus|chamomile|blossom|\btea\b|earl grey|honeysuckle|زهر|زهور|ياسمين|ورد|لافندر|كركديه|بابونج|شاي/i,
+  choc: /choc|cocoa|cacao|\bnut|hazel|almond|walnut|pecan|peanut|caramel|toffee|brown sugar|panela|molasses|maple|vanilla|spice|cinnamon|clove|malt|tobacco|شوكولا|كاكاو|مكسرات|بندق|لوز|جوز|كراميل|توفي|سكر بني|دبس|فانيلا|قرفة|بهارات|هيل/i
+};
+const ORIGIN_RX = {
+  fruity: /ethiop|kenya|yemen|rwanda|burundi|panama|إثيوب|اثيوب|أثيوب|كيني|يمن|رواند|بوروندي|بنما/i,
+  choc: /brazil|brasil|indonesia|sumatra|india|peru|mexico|nicaragua|uganda|برازيل|إندونيس|اندونيس|الهند|بيرو|مكسيك|نيكاراغ|أوغندا|اوغندا/i
+};
+function beanProfile(){
+  const b = bean(), w = {}, found = [];
+  const add = (k, v) => { w[k] = (w[k] || 0) + v; };
+  const R = {light:{light:3}, medlight:{light:2, medium:1.5}, medium:{medium:3}, meddark:{medium:1.5, dark:2.5}, dark:{dark:3}}[b.roast] || {};
+  for (const k in R) add(k, R[k]);
+  if (b.process === "natural" || b.process === "anaerobic"){ add("natural", 2); add("fruity", 1); }
+  else if (b.process === "washed"){ add("washed", 2); add("floral", .5); }
+  else if (b.process === "honey"){ add("body", 1); add("fruity", .5); }
+  for (const k in NOTE_RX) if (NOTE_RX[k].test(b.notes)){ add(k, 1.5); found.push(k); }
+  for (const k in ORIGIN_RX) if (ORIGIN_RX[k].test(b.origin)) add(k, .5);
+  const P = {classic:{beginner:1.5, washed:.5}, fruity:{fruity:2.5}, sweet:{choc:1, body:1}, choc:{choc:2.5}, floral:{floral:2.5}, bold:{body:2.5, choc:.5}}[state.taste] || {};
+  for (const k in P) add(k, P[k]);
+  return {w, b, notes:found};
+}
+function rankRecipes(){
+  const {w, b} = beanProfile();
+  const darkish = b.roast === "dark" || b.roast === "meddark", lightish = b.roast === "light" || b.roast === "medlight";
+  return libForTemp().map(x => {
+    const u = x.use || []; let score = 0; const hits = [];
+    for (const k of u) if (w[k]){ score += w[k]; hits.push(k); }
+    // keep roast levels sensible: no light-only recipe for dark beans, and the reverse
+    if (darkish && !u.includes("dark") && !u.includes("medium")) score -= 3;
+    if (lightish && u.includes("dark") && !u.includes("light")) score -= 2;
+    hits.sort((a, c) => w[c] - w[a]);
+    return {x, score, hits};
+  }).sort((a, c) => c.score - a.score || LIB.indexOf(a.x) - LIB.indexOf(c.x));
+}
+function renderMatches(ranks){
+  const {b, notes} = beanProfile();
+  const parts = [T("{r} roast", {r:T(ROAST[b.roast].name)}), T(PROCESS[b.process].name)];
+  notes.forEach(n => parts.push(T({fruity:"fruity notes", floral:"floral notes", choc:"chocolatey notes"}[n])));
+  $("matchSummary").innerHTML = T("<b>Your beans:</b> {list}. <b>You like:</b> {t}.", {list:esc(parts.join(T(", "))), t:esc(T(TASTE[state.taste].name))});
+  $("matchList").innerHTML = ranks.slice(0, 3).map((m, i) => { const x = m.x; return `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
+    <span class="badge${i === 0 ? " top" : ""}">${esc(T(i === 0 ? "Best match" : "Also a good fit"))}</span>
+    <span class="lc-top"><span class="lc-name">${esc(L(x, "name"))}</span><span class="lc-time">${esc(L(x, "time"))}</span></span>
+    <span class="lc-by">${esc(L(x, "by"))}</span>
+    <span class="lc-why"><b>${esc(T("Why:"))}</b> ${esc(m.hits.slice(0, 4).map(kwName).join(T(", ")) || T("a good all-rounder"))}</span>
+    <span class="lc-stats">${esc(x.ice ? T("{d} g coffee · {w} g water + {i} g ice · {c} °C", {d:x.dose, w:x.water, i:x.ice, c:x.tempC}) : T("{d} g coffee · {w} g water · {c} °C", {d:x.dose, w:x.water, c:x.tempC}))}</span>
+    ${x.gear ? `<span class="lc-gear">${esc(L(x, "gear"))}</span>` : ""}</button>`; }).join("");
+  $("seeAll").textContent = T("See all {n} recipes", {n:libForTemp().length});
+}
 function applyModeUI(){
-  const lib = state.brewMode === "library";
-  $("libBlock").hidden = !lib; $("beansBlock").hidden = lib;
+  const lib = state.brewMode === "library", match = lib && state.libView === "match";
+  $("libBlock").hidden = !lib; $("beansBlock").hidden = lib && !match;
+  $("browseBox").hidden = match; $("matchBlock").hidden = !match;
   $("tempMode").hidden = lib; $("tasteField").hidden = lib; $("brewerField").hidden = lib;
+  // number the visible sections in order
+  let n = 0; document.querySelectorAll("#form > section.block").forEach(s => { if (!s.hidden) s.querySelector(".block-head .n").textContent = ++n; });
   if (document.activeElement !== $("dose")) $("dose").value = state[doseKey()];
 }
 
@@ -639,8 +728,21 @@ function frenchHot(r, ta, dose, ratio){
 function render(){
   const lib = state.brewMode === "library";
   syncAll(); applyModeUI();
+  const matching = lib && state.libView === "match";
+  let ranks = null, myMatch = null;
+  if (matching){
+    ranks = rankRecipes();
+    // follow the best match whenever it changes; a recipe tapped by hand stays until then
+    const top = ranks[0].x;
+    if (state.matchTop !== top.id){ state.matchTop = top.id; state.libId = top.id; state.libDose = top.dose; }
+  }
   const b = bean(), r = lib ? libRecipe() : compute(), br = r.brewer;
   const coldBrew = !lib && r.iced && state.brewer==="press";
+  if (matching){
+    renderMatches(ranks);
+    myMatch = ranks.find(m => m.x.id === r.lib.id);
+    if (myMatch && myMatch.hits.length) r.why.unshift(T("Why it suits your beans: {list}.", {list:myMatch.hits.map(kwName).join(T(", "))}));
+  }
   if (lib){
     renderLibList();
     $("rTitle").textContent = L(r.lib, "name");
@@ -685,7 +787,7 @@ function render(){
   $("appliedText").textContent = state.adj.log.length ? T("Adjusted: {list}", {list:state.adj.log.map(x => T(x)).join(T(", "))}) : "";
   current = r; resetTimer(); $("notes").textContent = "";
   try { localStorage.setItem("brewprint.draft", JSON.stringify({bean:b, mode:state.mode, taste:state.taste, brewer:state.brewer, dose:state.dose, grinder:state.grinder,
-    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter})); } catch(e){}
+    brewMode:state.brewMode, libId:state.libId, libDose:state.libDose, libFilter:state.libFilter, libView:state.libView})); } catch(e){}
 }
 
 function drawChart(r){
@@ -717,7 +819,14 @@ function bindSeg(id, key){
   el.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; state[key] = b.dataset.v; sync(); render(); });
   return sync;
 }
-const syncers = [bindSeg("tempMode","mode"), bindSeg("libTemp","mode"), bindSeg("brewMode","brewMode"), bindSeg("taste","taste"), bindSeg("brewer","brewer")];
+const syncers = [bindSeg("tempMode","mode"), bindSeg("libTemp","mode"), bindSeg("brewMode","brewMode"), bindSeg("taste","taste"), bindSeg("matchTaste","taste"), bindSeg("libView","libView"), bindSeg("brewer","brewer")];
+$("matchList").addEventListener("click", e => {
+  const c = e.target.closest(".libcard"); if (!c) return;
+  const rec = libById(c.dataset.id); if (!rec) return;
+  state.libId = rec.id; state.libDose = rec.dose; render();
+  if (matchMedia("(max-width: 959px)").matches) document.querySelector(".card").scrollIntoView({behavior: smooth(), block: "start"});
+});
+$("seeAll").onclick = () => { state.libView = "browse"; state.libFilter = ""; render(); $("libBlock").scrollIntoView({behavior: smooth(), block: "start"}); };
 const syncAll = () => syncers.forEach(f => f());
 $("libList").addEventListener("click", e => {
   const c = e.target.closest(".libcard"); if (!c) return;
@@ -963,7 +1072,7 @@ if (draft && draft.bean && draft.bean.name && !isExampleName(draft.bean.name)){
   $("exampleTag").hidden = true;
 } else setBean(EXAMPLES[LANG]);
 if (draft && draft.brewMode){
-  Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose, libFilter:draft.libFilter || ""});
+  Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose, libFilter:draft.libFilter || "", libView:draft.libView || "browse"});
   if (draft.mode) state.mode = draft.mode;
   if (draft.grinder) state.grinder = draft.grinder === "comandante" ? "timemore" : draft.grinder;
 }
