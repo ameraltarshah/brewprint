@@ -1,5 +1,5 @@
 // Brewprint offline cache. Bump VERSION whenever any app file changes.
-const VERSION = "brewprint-v8";
+const VERSION = "brewprint-v9";
 const KEEP = [VERSION, "brewprint-fonts", "brewprint-ocr"];
 const SHELL = ["./", "index.html", "bagparse.js", "library.js", "i18n.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 

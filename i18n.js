@@ -11,7 +11,7 @@ window.I18N_AR = {
   "Famous recipes": "وصفات مشهورة",
   "Proven V60 recipes, step by step": "وصفات V60 مجرّبة، خطوة بخطوة",
   "Customize": "خصّص وصفتك",
-  "Built for your beans and taste": "مبنية على البن وذوقك",
+  "A new recipe calculated for your beans": "وصفة جديدة محسوبة للبن الخاص بك",
   "How do you want to brew?": "كيف تريد التحضير؟",
   "Choose a recipe": "اختر وصفة",
   "Hot or iced": "حار أو بارد",
@@ -51,7 +51,7 @@ window.I18N_AR = {
 
   /* match my beans */
   "Match my beans": "طابق مع البن الخاص بي",
-  "Suggests a recipe for your coffee": "يقترح وصفة تناسب قهوتك",
+  "Picks the famous recipe that fits your beans": "يختار الوصفة المشهورة الأنسب لبنك",
   "Browse all": "تصفّح الكل",
   "Filter by what each recipe suits": "صفِّ حسب ما تناسبه كل وصفة",
   "How to pick a recipe": "طريقة اختيار الوصفة",
@@ -119,7 +119,12 @@ window.I18N_AR = {
   "Saved beans and recipes stay on this phone only; deleting the app or clearing browser data removes them.": "البن والوصفات المحفوظة تبقى على هذا الجوال فقط؛ حذف التطبيق أو مسح بيانات المتصفح يحذفها.",
 
   /* bottom bar */
-  "View recipe": "عرض الوصفة", " from zero": " من الصفر", "ice": "ثلج", "Done": "تم",
+  "View recipe": "عرض الوصفة", "Recipes": "الوصفات", "Saved ✓": "تم الحفظ ✓", "Try the example bag": "جرّب الكيس التجريبي", "e.g. Ethiopia": "مثال: إثيوبيا", "← All recipes": "→ كل الوصفات", "← Your matches": "→ أنسب الوصفات لك", " from zero": " من الصفر", "ice": "ثلج", "Done": "تم",
+
+  "Drawdown done (aim for {a} to {b}). Remove the brewer and swirl the cup.": "انتهت التصفية (الهدف بين {a} و{b}). ارفع الأداة وحرّك الكوب بشكل دائري.",
+  "Drawdown done (aim for {a} to {b}). Remove the brewer and swirl the server so the ice melts in evenly.": "انتهت التصفية (الهدف بين {a} و{b}). ارفع الأداة وحرّك الإبريق بشكل دائري ليذوب الثلج بالتساوي.",
+  "Drained (aim for {a} to {b}). Swirl and serve.": "انتهت التصفية (الهدف بين {a} و{b}). حرّك وقدّم.",
+  "aim {a} to {b}": "الهدف {a} إلى {b}",
 
   /* recipe card */
   "Recipe": "الوصفة",
@@ -144,8 +149,8 @@ window.I18N_AR = {
   "Close": "إغلاق", "Open": "فتح", "Delete": "حذف",
   "No saved recipes yet. Build one and tap “Save recipe”.": "لا توجد وصفات محفوظة بعد. جهّز وصفة واضغط «احفظ الوصفة».",
   "Famous recipe": "وصفة مشهورة", "Untitled coffee": "قهوة بدون اسم",
-  "Brewprint v8 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
-    "Brewprint الإصدار 8 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
+  "Brewprint v9 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.":
+    "Brewprint الإصدار 9 · مجاني ويعمل بدون إنترنت بعد التثبيت. الوصفات المشهورة معروضة كما نشرها أصحابها؛ اضغط «شاهد الوصفة الأصلية» لرؤية المصدر. نقرات Timemore C2 تُحسب من الصفر: أدر القرص مع عقارب الساعة حتى تتلامس الشفرات، ثم عُدّ النقرات للخلف. الإعدادات نقطة بداية لأن صفر كل مطحنة يختلف قليلاً. تذوّق، ثم استخدم «كيف كان الطعم؟» لضبط الوصفة.",
 
   /* card labels */
   "Famous recipe · Hot V60": "وصفة مشهورة · V60 حار", "Famous recipe · Iced V60": "وصفة مشهورة · V60 بارد",

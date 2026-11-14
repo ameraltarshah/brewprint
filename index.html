@@ -21,7 +21,7 @@
 /* Layout: form column (beans → brew) beside a sticky "brew card" that reads like a scale display. */
 :root{
   --bg:#EDEFE9; --surface:#F8F9F5; --sunk:#E2E6DE; --ink:#1B221E; --muted:#5D6A62; --line:#CBD2C8;
-  --accent:#0E6A58; --accent-ink:#F4FBF8; --accent-soft:#D3E8E1; --amber:#B97A10; --amber-soft:#F3E5C6;
+  --accent:#0E6A58; --accent-ink:#F4FBF8; --accent-soft:#D3E8E1; --amber:#8A5A00; --amber-soft:#F3E5C6;
   --lcd:#1C2420; --lcd-ink:#D9F2E7; --lcd-dim:#7E9A8D;
   --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -71,24 +71,27 @@ img{max-width:100%}
 .kw{font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-weight:500;line-height:1.3}
 button.kw{cursor:pointer}
 button.kw:hover{border-color:var(--ink)}
-button.kw[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.kw[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .kw small{opacity:.7;margin-inline-start:5px;font-family:var(--f-mono);font-size:11px}
 .lc-use{display:flex;flex-wrap:wrap;gap:5px}
-.lc-use .kw{font-size:11.5px;padding:2px 9px;background:var(--bg)}
+.lc-use .kw{font-size:11.5px;padding:2px 9px;background:var(--sunk);border-color:transparent;border-radius:4px}
 .lc-use .kw.on{border-color:var(--accent);color:var(--accent);font-weight:600}
 .usefor{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px}
 .viewswitch{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .viewswitch button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:1px;min-width:0}
 .viewswitch button b{font-size:14.5px}
 .viewswitch button span{font-size:12px;color:var(--muted)}
-.viewswitch button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
-.viewswitch button[aria-pressed="true"] span{color:color-mix(in srgb,var(--bg) 75%,transparent)}
+.viewswitch button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.viewswitch button[aria-pressed="true"] b{color:var(--accent)}
+
 .matchsum{margin:0;font-size:14px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 14px}
 .matchsum b{color:var(--ink)}
 .badge{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;align-self:flex-start;background:var(--amber-soft);color:var(--amber)}
 .badge.top{background:var(--accent);color:var(--accent-ink)}
 .lc-why{font-size:13px;color:var(--ink)}
 .lc-why b{color:var(--accent)}
+.backlink{align-self:flex-start;font-size:14px;padding:6px 0;text-decoration:none}
+@media (min-width:960px){.backlink{display:none}}
 #helpDlg{width:min(720px,calc(100vw - 24px))}
 .mybeans{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .mb-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -169,8 +172,12 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
 .form{display:flex;flex-direction:column;gap:28px;min-width:0}
 .block{display:flex;flex-direction:column;gap:14px}
 .block-head{display:flex;align-items:baseline;gap:10px}
-.block-head .n{font-family:var(--f-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:0 5px}
+.card-step{display:flex;align-items:center;gap:8px}
+.card-step .label{flex:1;min-width:0}
+.savetop{padding:6px 12px;font-size:13px;flex:none}
+.block-head .n,.card-step .n{font-family:var(--f-mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:0 5px}
 .block-head h2{font-size:21px;font-weight:600}
+.tryex{margin-inline-start:auto;font-size:13.5px}
 .example{font-size:12px;color:var(--amber);background:var(--amber-soft);border-radius:4px;padding:2px 8px;margin-inline-start:auto}
 
 .drop{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;background:var(--surface);cursor:pointer;position:relative}
@@ -190,7 +197,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
 @media (max-width:480px){.fields{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:5px;min-width:0}
 .field label{font-size:13px;font-weight:600}
-.field input,.field select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+.field input,.field select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0;min-height:46px}
 .field input:focus,.field select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
 
 .seg{display:flex;flex-wrap:wrap;gap:8px}
@@ -201,9 +208,9 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
 .toggle{display:grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:10px;padding:4px;gap:4px;max-width:320px}
 .toggle button{border:0;background:transparent;border-radius:7px;padding:9px;cursor:pointer;font-weight:600}
 .toggle button[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
-.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
 .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
-.stepper button{border:0;background:transparent;width:42px;height:44px;font-size:20px;cursor:pointer}
+.stepper button{border:0;background:transparent;width:46px;height:46px;font-size:22px;cursor:pointer}
 .stepper button:hover{background:var(--sunk)}
 .stepper input{width:64px;text-align:center;border:0;background:transparent;font-family:var(--f-mono);font-size:20px;font-weight:600;padding:0}
 .stepper span{padding-inline-end:12px;color:var(--muted)}
@@ -220,7 +227,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
 .lcd .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--lcd-dim)}
 .lcd .v{font-family:var(--f-mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.15}
 .lcd .v small{font-size:12px;color:var(--lcd-dim);margin-inline-start:3px}
-.lcd .s{font-family:var(--f-mono);font-size:11.5px;color:var(--lcd-dim);overflow-wrap:anywhere}
+.lcd .s{font-family:var(--f-mono);font-size:12.5px;color:color-mix(in srgb,var(--lcd-ink) 78%,var(--lcd));overflow-wrap:anywhere}
 .lcd{border-top:1px solid var(--lcd);border-bottom:1px solid var(--lcd)}
 .lcd div{outline:1px solid color-mix(in srgb,var(--lcd-dim) 22%,transparent)}
 @media (max-width:420px){.lcd{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -255,6 +262,7 @@ ol.steps li.done{opacity:.5}
 .next b{color:var(--ink)}
 .primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer}
 .primary:hover{filter:brightness(1.07)}
+#tStart{min-width:172px}
 .primary:disabled{opacity:.6;cursor:default}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
 .notes{white-space:pre-wrap;font-size:14px;background:var(--bg);border-radius:10px;padding:12px 14px;margin:0}
@@ -290,7 +298,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 <form class="form" id="form" autocomplete="off">
   <div class="modeswitch" role="group" aria-label="How do you want to brew?" data-i18n-aria id="brewMode">
     <button type="button" data-v="library" aria-pressed="true"><b data-i18n>Famous recipes</b><span data-i18n>Proven V60 recipes, step by step</span></button>
-    <button type="button" data-v="custom" aria-pressed="false"><b data-i18n>Customize</b><span data-i18n>Built for your beans and taste</span></button>
+    <button type="button" data-v="custom" aria-pressed="false"><b data-i18n>Customize</b><span data-i18n>A new recipe calculated for your beans</span></button>
   </div>
 
   <section class="block" id="libBlock">
@@ -300,7 +308,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
       <button type="button" data-v="iced" aria-pressed="false" data-i18n>Iced</button>
     </div>
     <div class="viewswitch" role="group" aria-label="How to pick a recipe" data-i18n-aria id="libView">
-      <button type="button" data-v="match" aria-pressed="false"><b data-i18n>Match my beans</b><span data-i18n>Suggests a recipe for your coffee</span></button>
+      <button type="button" data-v="match" aria-pressed="false"><b data-i18n>Match my beans</b><span data-i18n>Picks the famous recipe that fits your beans</span></button>
       <button type="button" data-v="browse" aria-pressed="true"><b data-i18n>Browse all</b><span data-i18n>Filter by what each recipe suits</span></button>
     </div>
     <div id="browseBox" class="block">
@@ -309,12 +317,12 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
         <div class="kwchips" id="libFilters" role="group" aria-label="Filter recipes by what they're best for" data-i18n-aria></div>
         <div class="hint" id="libCount" role="status"></div>
       </div>
-      <div class="libcards" id="libList" role="list"></div>
+      <div class="libcards" id="libList" role="group" aria-label="Recipes" data-i18n-aria></div>
     </div>
   </section>
 
   <section class="block" id="beansBlock">
-    <div class="block-head"><span class="n">1</span><h2 data-i18n>Your beans</h2><span class="example" id="exampleTag" data-i18n>Example bag, replace with yours</span></div>
+    <div class="block-head"><span class="n">1</span><h2 data-i18n>Your beans</h2><button class="link tryex" type="button" id="tryExample" hidden data-i18n>Try the example bag</button><span class="example" id="exampleTag" hidden data-i18n>Example bag, replace with yours</span></div>
     <div class="mybeans" id="myBeansBar">
       <div class="mb-head"><span class="label" data-i18n>From my beans</span><button class="link" type="button" id="manageBeans" data-i18n>Manage</button></div>
       <div class="mb-chips" id="myBeansChips"></div>
@@ -334,7 +342,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
     <div class="fields">
       <div class="field wide"><label for="bName" data-i18n>Coffee name</label><input id="bName" dir="auto" placeholder="e.g. Guji Hambela" data-i18n-ph></div>
       <div class="field"><label for="bRoaster" data-i18n>Roaster</label><input id="bRoaster" dir="auto" placeholder="Optional" data-i18n-ph></div>
-      <div class="field"><label for="bOrigin" data-i18n>Origin</label><input id="bOrigin" dir="auto" list="origins" placeholder="Country" data-i18n-ph></div>
+      <div class="field"><label for="bOrigin" data-i18n>Origin</label><input id="bOrigin" dir="auto" list="origins" placeholder="e.g. Ethiopia" data-i18n-ph></div>
       <div class="field"><label for="bProcess" data-i18n>Process</label>
         <select id="bProcess"><option value="washed" data-i18n-opt>Washed</option><option value="natural" data-i18n-opt>Natural</option><option value="honey" data-i18n-opt>Honey</option><option value="anaerobic" data-i18n-opt>Anaerobic / experimental</option></select></div>
       <div class="field"><label for="bRoast" data-i18n>Roast level</label>
@@ -359,7 +367,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
         <button type="button" class="chip" data-v="bold" data-i18n>Bold</button>
       </div></div>
     <p class="matchsum" id="matchSummary"></p>
-    <div class="libcards" id="matchList" role="list"></div>
+    <div class="libcards" id="matchList" role="group" aria-label="Your best matches" data-i18n-aria></div>
     <button class="link" type="button" id="seeAll"></button>
   </section>
 
@@ -399,7 +407,8 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 
 <article class="card" aria-live="polite">
   <div class="card-top">
-    <span class="label" id="cardKicker" data-i18n>Recipe</span>
+    <button class="link backlink" type="button" id="backToList" hidden></button>
+    <div class="card-step"><span class="n" id="cardNum">3</span><span class="label" id="cardKicker" data-i18n>Recipe</span><button class="ghost savetop" type="button" id="saveTop" data-i18n>Save recipe</button></div>
     <h2 id="rTitle">Guji Hambela</h2>
     <div class="meta" id="rMeta"></div>
     <div class="tags" id="rTags"></div>
@@ -431,7 +440,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer data-i18n>Brewprint v8 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer data-i18n>Brewprint v9 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
 
 <div class="dock" id="dock" hidden>
@@ -531,7 +540,7 @@ const EXAMPLES = {
   ar:{name:"قوجي هامبيلا", roaster:"محمصة تجريبية", origin:"إثيوبيا", process:"natural", roast:"light", variety:"أصناف محلية", alt:"2100", notes:"توت أزرق، ياسمين، كاكاو"}
 };
 const isExampleName = n => n === EXAMPLES.en.name || n === EXAMPLES.ar.name;
-const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:true,
+const state = {mode:"hot", taste:"fruity", brewer:"v60", dose:18, grinder:"timemore", adj:{grind:0, temp:0, ratio:0, log:[]}, example:false,
   brewMode:"library", libId:"hoffmann-ultimate", libDose:30, libFilter:"", libView:"browse", matchTop:""};
 
 /* ---------- recipe library (library.js) ---------- */
@@ -574,7 +583,7 @@ function libRecipe(){
 }
 function renderLibList(){
   renderLibFilters();
-  $("libList").innerHTML = libVisible().map(x => `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
+  $("libList").innerHTML = libVisible().map(x => `<button type="button" class="libcard" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
     <span class="lc-top"><span class="lc-name">${esc(L(x, "name"))}</span><span class="lc-time">${esc(L(x, "time"))}</span></span>
     <span class="lc-by">${esc(L(x, "by"))}</span>
     <span class="lc-blurb">${esc(L(x, "blurb"))}</span>
@@ -627,7 +636,7 @@ function renderMatches(ranks){
   const parts = [T("{r} roast", {r:T(ROAST[b.roast].name)}), T(PROCESS[b.process].name)];
   notes.forEach(n => parts.push(T({fruity:"fruity notes", floral:"floral notes", choc:"chocolatey notes"}[n])));
   $("matchSummary").innerHTML = T("<b>Your beans:</b> {list}. <b>You like:</b> {t}.", {list:esc(parts.join(T(", "))), t:esc(T(TASTE[state.taste].name))});
-  $("matchList").innerHTML = ranks.slice(0, 3).map((m, i) => { const x = m.x; return `<button type="button" class="libcard" role="listitem" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
+  $("matchList").innerHTML = ranks.slice(0, 3).map((m, i) => { const x = m.x; return `<button type="button" class="libcard" data-id="${x.id}" aria-pressed="${x.id === state.libId}">
     <span class="badge${i === 0 ? " top" : ""}">${esc(T(i === 0 ? "Best match" : "Also a good fit"))}</span>
     <span class="lc-top"><span class="lc-name">${esc(L(x, "name"))}</span><span class="lc-time">${esc(L(x, "time"))}</span></span>
     <span class="lc-by">${esc(L(x, "by"))}</span>
@@ -643,6 +652,7 @@ function applyModeUI(){
   $("tempMode").hidden = lib; $("tasteField").hidden = lib; $("brewerField").hidden = lib;
   // number the visible sections in order
   let n = 0; document.querySelectorAll("#form > section.block").forEach(s => { if (!s.hidden) s.querySelector(".block-head .n").textContent = ++n; });
+  $("cardNum").textContent = n + 1;
   if (document.activeElement !== $("dose")) $("dose").value = state[doseKey()];
 }
 
@@ -729,12 +739,13 @@ function pour(r, br, ta, ro, dose, ratio, iced){
   }
   const dd = Math.round(br.drawdown * (iced?0.8:1));
   r.total = last + dd;
-  steps.push({s:r.total, a:T(iced ? "Drawdown done. Remove the brewer and swirl the server so the ice melts in evenly." : "Drawdown done. Remove the brewer and swirl the cup."), w:null, end:true});
+  const aim = {a:fmt(r.total - 10), b:fmt(r.total + 15)};
+  steps.push({s:r.total, a:T(iced ? "Drawdown done (aim for {a} to {b}). Remove the brewer and swirl the server so the ice melts in evenly." : "Drawdown done (aim for {a} to {b}). Remove the brewer and swirl the cup.", aim), w:null, end:true});
   r.steps = steps.map(x => ({...x, t:fmt(x.s), w:gw(x.w)}));
   r.water = water; r.ice = ice;
   r.ratioLabel = iced ? `1:${+((water+ice)/dose).toFixed(1)}` : "1:" + +(water/dose).toFixed(1);
   r.ratioSub = iced ? T("{r} brew + ice", {r:"1:" + +(water/dose).toFixed(1)}) : "";
-  r.timeLabel = fmt(r.total - 10) + "–" + fmt(r.total + 15);
+  r.timeLabel = fmt(r.total); r.timeSub = T("aim {a} to {b}", aim);
   r.prep = [T("Rinse the paper filter with hot water and discard the rinse."), T("Heat water to the set temperature (have about {n} g ready).", {n:water + 100})];
   if (iced) r.prep.unshift(T("Put {i} g of ice in the server or cup under the brewer.", {i:ice}));
   r.prep.push(T("Tare the scale with coffee in the brewer, make a small dip in the centre."));
@@ -748,12 +759,12 @@ function clever(r, ta, dose, ratio, iced){
     {s:0, a:T("Add {w} g water, then all the coffee.", {w:water}), w:water},
     {s:30, a:T("Stir gently 3 times to sink the crust. Put the lid on."), w:null},
     {s:steep, a:T(iced ? "Set the dripper on your iced server to start draining." : "Set the dripper on your cup to start draining."), w:null},
-    {s:steep+60, a:T("Drained. Swirl and serve."), w:null, end:true}
+    {s:steep+60, a:T("Drained (aim for {a} to {b}). Swirl and serve.", {a:fmt(steep + 45), b:fmt(steep + 80)}), w:null, end:true}
   ].map(x => ({...x, t:fmt(x.s), w:gw(x.w)}));
   r.total = steep+60; r.water = water; r.ice = ice;
   r.ratioLabel = iced ? `1:${+((water+ice)/dose).toFixed(1)}` : "1:" + +(water/dose).toFixed(1);
   r.ratioSub = iced ? T("{r} brew + ice", {r:"1:" + +(water/dose).toFixed(1)}) : "";
-  r.timeLabel = fmt(r.total - 15) + "–" + fmt(r.total + 20);
+  r.timeLabel = fmt(r.total); r.timeSub = T("aim {a} to {b}", {a:fmt(r.total - 15), b:fmt(r.total + 20)});
   r.prep = [T("Rinse the paper, valve closed."), T("Water first, then coffee, prevents clogging.")];
   if (iced) r.prep.unshift(T("Put {i} g of ice in the server.", {i:ice}));
   r.why.push(T("Full immersion for {t} before draining gives an even, forgiving extraction.", {t:fmt(steep)}));
@@ -836,6 +847,8 @@ function render(){
     $("rUse").hidden = true;
   }
   $("rSource").hidden = !lib;
+  $("backToList").hidden = !lib;
+  $("backToList").textContent = T(matching ? "← Your matches" : "← All recipes");
   $("whyTitle").textContent = T(lib ? "About this recipe" : "Why these numbers");
   $("dialSec").hidden = lib;
   const g = GRINDERS[state.grinder];
@@ -847,7 +860,7 @@ function render(){
     [T("Grind"), r.grind, T("µm"), (g ? g.name + ": " + g.f(r.grind) : grindWord(r.grind))],
     [T("Total time"), r.timeLabel, "", r.timeSub || ""]
   ];
-  if (r.iced && !coldBrew) cells[5][3] = T("final ratio {r}", {r:r.ratioLabel});
+  if (r.iced && !coldBrew) cells[5][3] = T("final ratio {r}", {r:r.ratioLabel}) + (r.timeSub && !lib ? " · " + r.timeSub : "");
   $("lcd").innerHTML = cells.map(([k,v,u,s]) => `<div><span class="k">${esc(k)}</span><span class="v">${esc(v)}${u?`<small>${esc(u)}</small>`:""}</span><span class="s">${esc(s)||"&nbsp;"}</span></div>`).join("");
   $("prep").innerHTML = r.prep.map(p => `<li>${esc(p)}</li>`).join("");
   $("steps").innerHTML = r.steps.map((s,i) => `<li data-i="${i}" data-s="${s.s ?? ""}"><span class="t">${esc(s.t)}</span><span>${esc(s.a)}</span><span class="w">${esc(s.w)}</span></li>`).join("");
@@ -969,6 +982,18 @@ $("tStart").onclick = async () => {
 };
 $("tReset").onclick = resetTimer;
 $("dockStop").onclick = resetTimer;
+$("saveTop").onclick = () => {
+  $("save").click();
+  $("saveTop").textContent = T("Saved ✓"); clearTimeout($("saveTop")._t);
+  $("saveTop")._t = setTimeout(() => { $("saveTop").textContent = T("Save recipe"); }, 2000);
+};
+// back from the open recipe to the card that was tapped
+$("backToList").onclick = () => {
+  const list = state.libView === "match" ? $("matchList") : $("libList");
+  const card = list.querySelector(`[data-id="${state.libId}"]`) || list;
+  card.scrollIntoView({behavior: smooth(), block: "center"});
+  if (card.focus) card.focus({preventScroll: true});
+};
 
 /* ---------- bottom bar ---------- */
 let brewing = false, cardOnScreen = true;
@@ -1238,6 +1263,7 @@ const beanLine = b => [b.roaster, b.origin, PROCESS[b.process] ? T(PROCESS[b.pro
 // the loaded saved bean, only while its name still matches what's typed (a new name means a new bean)
 function loadedBean(){ const x = loadBeans().find(e => e.id === currentBeanId); return x && same(x.bean.name, $("bName").value) ? x : null; }
 function renderBeanChips(){
+  $("tryExample").hidden = !!$("bName").value.trim() || state.example;
   const list = loadBeans(), cur = loadedBean();
   $("myBeansChips").innerHTML = list.length
     ? list.map(x => `<button type="button" class="kw beanchip" data-bean="${x.id}" aria-pressed="${!!cur && x.id === cur.id}">${x.thumb ? `<img src="${x.thumb}" alt="">` : "<i></i>"}<span>${esc(x.bean.name || T("Untitled coffee"))}</span></button>`).join("")
@@ -1255,6 +1281,10 @@ function useBean(id){
   if (state.brewMode === "library" && state.libView !== "match") state.libView = "match";
   render();
 }
+$("tryExample").onclick = () => {
+  setBean(EXAMPLES[LANG]); currentBeanId = null; lastThumb = null; resetThumb();
+  state.example = true; $("exampleTag").hidden = false; render();
+};
 $("myBeansChips").addEventListener("click", e => { const c = e.target.closest("[data-bean]"); if (c) useBean(c.dataset.bean); });
 $("saveBean").onclick = () => {
   const b = bean();
@@ -1314,7 +1344,7 @@ try { draft = JSON.parse(localStorage.getItem("brewprint.draft")||"null"); } cat
 if (draft && draft.bean && draft.bean.name && !isExampleName(draft.bean.name)){
   setBean(draft.bean); Object.assign(state, {mode:draft.mode||"hot", taste:draft.taste||"classic", brewer:draft.brewer||"v60", dose:draft.dose||18, grinder:draft.grinder==="comandante"?"timemore":(draft.grinder||"timemore"), example:false});
   $("exampleTag").hidden = true;
-} else setBean(EXAMPLES[LANG]);
+}
 if (draft && draft.brewMode){
   Object.assign(state, {brewMode:draft.brewMode, libId:draft.libId || state.libId, libDose:draft.libDose || state.libDose, libFilter:draft.libFilter || "", libView:draft.libView || "browse"});
   if (draft.mode) state.mode = draft.mode;
