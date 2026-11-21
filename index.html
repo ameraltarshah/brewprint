@@ -136,6 +136,7 @@ button.kw[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-colo
 body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 body.has-dock{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .dock{bottom:calc(62px + env(safe-area-inset-bottom,0px));padding-bottom:0}
+.addbeans{width:100%;margin:4px 0 12px;min-height:48px}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .tabs-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .tab{all:unset;box-sizing:border-box;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:11.5px;font-weight:500;text-align:center;padding:6px 2px;line-height:1.2}
@@ -448,7 +449,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 </article>
 </div>
 
-<footer data-i18n>Brewprint v10 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
+<footer data-i18n>Brewprint v11 · Free, and works offline once installed. Famous recipes are shown as their authors published them; tap “See the original recipe” for the source. Timemore C2 clicks are counted from zero: turn the dial clockwise until the burrs touch, then count clicks back. Settings are starting points, since every grinder's zero differs slightly. Taste, then use “How did it taste?” to dial in.</footer>
 </div>
 
 <div class="dock" id="dock" hidden>
@@ -469,6 +470,7 @@ footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padd
 
 <dialog id="beansDlg">
   <div class="dlg-h"><h3 data-i18n>My beans</h3><button class="ghost" type="button" id="closeBeans" data-i18n>Close</button></div>
+  <button class="primary addbeans" type="button" id="addBeans" data-i18n>+ Add new beans</button>
   <ul class="saved" id="beansList"></ul>
 </dialog>
 
@@ -539,7 +541,7 @@ const PROCESS = {
 const GRINDERS = {
   um:null,
   comandante:{name:"Comandante C40", f:um => T("{n} clicks", {n:Math.round(um/30)})},
-  timemore:{name:"Timemore C2", f:um => T("{n} clicks from zero", {n:clamp(Math.round(um/40),6,36)})},
+  timemore:{name:"Timemore C2", f:um => T("{n} clicks from zero", {n:clamp(Math.round(um/33),6,40)})},
   encore:{name:"Baratza Encore", f:um => T("setting {n}", {n:clamp(Math.round((um-230)/26),1,40)})},
   ode:{name:"Fellow Ode Gen 2", f:um => { const v = clamp(1+(um-250)/105,1,11); const w = Math.floor(v), t = Math.round((v-w)*3); return t===3 ? String(w+1) : t ? w + (t===1?".1":".2") : String(w); }}
 };
@@ -1074,7 +1076,7 @@ function renderHelp(){
     T("Pour-over: a bloom of 2.5 to 3× the coffee, then equal pours 30 seconds apart. Number of pours: {list}.", {list:TASTES.map(k => T(TASTE[k].name) + " " + TASTE[k].pours).join(T(", "))}),
     T("Iced pour-over uses less hot water (about 1:9) and pours it onto ice weighing 90% of that water."),
     T("Iced + French Press makes a cold brew concentrate: about 1:8, 14 to 18 hours in the fridge."),
-    T("Timemore C2 clicks = microns ÷ 40, counted from zero.")
+    T("Timemore C2 clicks = microns ÷ 33, counted from zero.")
   ]));
   h.push(`<p>${esc(T("“How did it taste?” buttons stack on top:"))}</p>`);
   h.push(tbl([T("Button"), M, C, T("Ratio")], [["sour","Sour or thin"],["bitter","Bitter or dry"],["weak","Weak, watery"],["strong","Too strong"]].map(([k, n]) => [T(n), sgn(DIAL[k].grind), sgn(DIAL[k].temp), sgn(DIAL[k].ratio)])));
@@ -1335,6 +1337,16 @@ function showBeans(open = true){
 }
 $("manageBeans").onclick = () => showBeans();
 $("closeBeans").onclick = () => $("beansDlg").close();
+$("addBeans").onclick = () => {
+  $("beansDlg").close();
+  setBean({name:"", roaster:"", origin:"", variety:"", alt:"", notes:""});
+  currentBeanId = null; lastThumb = null; state.example = false; $("exampleTag").hidden = true; resetThumb(); say("");
+  if (state.brewMode === "library" && state.libView !== "match") state.brewMode = "custom";
+  syncAll(); render(); renderBeanChips();
+  $("beansBlock").scrollIntoView({behavior: smooth(), block: "start"});
+  setTimeout(() => $("bName").focus({preventScroll:true}), 350);
+  $("beanStatus").textContent = T("Fill in your beans or scan the bag, then tap “Save to My beans”.");
+};
 $("beansList").addEventListener("click", e => {
   const u = e.target.closest("[data-use]"), d = e.target.closest("[data-delbean]");
   if (u){ useBean(u.dataset.use); $("beansDlg").close(); $("beansBlock").scrollIntoView({behavior: smooth(), block: "start"}); }
